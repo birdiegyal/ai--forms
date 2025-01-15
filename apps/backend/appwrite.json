@@ -1,0 +1,24 @@
+{
+    "projectId": "678403b0001d946aa5b6",
+    "functions": [
+        {
+            "$id": "67850b570009ebd320b1",
+            "name": "fill-form",
+            "runtime": "node-22",
+            "execute": [
+                "any"
+            ],
+            "events": [],
+            "scopes": [
+                "users.read"
+            ],
+            "schedule": "",
+            "timeout": 15,
+            "enabled": true,
+            "logging": true,
+            "entrypoint": "dist/main.js",
+            "commands": "npm install && npm run build",
+            "path": "functions/fill-form"
+        }
+    ]
+}
