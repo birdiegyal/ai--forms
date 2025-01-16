@@ -12,15 +12,15 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import React from "react"
+import { dbConfig } from "@/lib/utils"
 
-interface UploadFilesFormProps extends React.HTMLAttributes<HTMLFormElement> { }
+interface UploadFilesFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const uploadFilesSchema = z.object({
   files: z.instanceof(FileList),
 })
 
 export default function UploadFilesForm({ className }: UploadFilesFormProps) {
-
   const form = useForm<z.infer<typeof uploadFilesSchema>>({
     resolver: zodResolver(uploadFilesSchema),
     mode: "onChange",
@@ -28,6 +28,30 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
 
   function onSubmit(formData: z.infer<typeof uploadFilesSchema>) {
     console.log("submit", formData)
+    const resumeFile = formData.files[0]
+    const reader = new FileReader()
+    reader.readAsDataURL(resumeFile)
+
+    reader.onload = () => {
+      const dataURL = reader.result as string
+      const base64ResumeFile = dataURL.split(",")[1]
+      const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion || 1)
+      req.onerror = dbConfig.onError
+      req.onupgradeneeded = dbConfig.onUpgradeNeeded!
+      req.onsuccess = (e) => {
+        e.preventDefault()
+        const db = req.result
+        const addReq = db
+          .transaction(dbConfig.storeName!, "readwrite")
+          .objectStore(dbConfig.storeName!)
+          .add(base64ResumeFile, "userId")
+        addReq.onsuccess = (e) => {
+          console.log("file uploaded.", e)
+        }
+        // you may want to add a retry mechanism in here.
+        addReq.onerror = dbConfig.onError
+      }
+    }
     form.reset()
   }
 
@@ -54,7 +78,7 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
         <Button
           type="submit"
           variant={"secondary"}
-          className="btn btn-secondary h-8 focus-visible:ring-secondary"
+          className="btn btn-secondary focus-visible:ring-secondary h-8"
         >
           Upload
         </Button>
