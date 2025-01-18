@@ -26,19 +26,24 @@ export default function SignupForm({ className }: SignupFormProps) {
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
   })
-  
+
   async function onSubmit(formData: z.infer<typeof signupFormSchema>) {
     console.log(formData)
-    const res = await getMagicLink({ email: formData.email, redirectTo: "http://localhost:3001/fillforms" })
+
+    const res = await getMagicLink({
+      email: formData.email,
+      redirectTo:
+        import.meta.env.VITE_REDIRECT_URL || "http://localhost:3001/fillforms", //port should be a param here.
+    })
 
     if (res !== undefined) {
       toast({
         title: "Magic URL sent",
-        description: "check your email inbox."
+        description: "check your email inbox.",
       })
     }
     form.reset({
-      email: ""
+      email: "",
     })
   }
 
