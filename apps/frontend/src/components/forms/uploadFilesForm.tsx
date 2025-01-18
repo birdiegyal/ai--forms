@@ -16,7 +16,6 @@ import { dbConfig } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useNavigate } from "@tanstack/react-router"
-
 interface UploadFilesFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const uploadFilesSchema = z.object({
