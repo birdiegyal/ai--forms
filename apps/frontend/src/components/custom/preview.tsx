@@ -1,17 +1,29 @@
 import { cn } from "@/lib/utils"
+import { useEffect, useRef } from "react"
+
 interface PreviewProps extends React.HTMLAttributes<HTMLIFrameElement> {
   src: string
+  autofillRes: {
+    querySelector: string
+    value: string
+  }[]
 }
 
-export default function Preview({ src, className, ...props }: PreviewProps) {
+export default function Preview({
+  src,
+  autofillRes,
+  className,
+  ...props
+}: PreviewProps) {
   return (
     <div
       className={cn(
-        "flex size-full items-center justify-center rounded-lg border shadow-lg overflow-clip",
+        "flex size-full items-center justify-center overflow-clip rounded-lg border shadow-lg",
         className,
       )}
     >
       {src ? (
+        // add loading response.
         <iframe
           src={src}
           {...props}

@@ -13,6 +13,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import React from "react"
 import { dbConfig } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { useNavigate } from "@tanstack/react-router"
 
 interface UploadFilesFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
@@ -25,9 +28,10 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
     resolver: zodResolver(uploadFilesSchema),
     mode: "onChange",
   })
+  const { toast, dismiss } = useToast()
+  const navigate = useNavigate()
 
   function onSubmit(formData: z.infer<typeof uploadFilesSchema>) {
-    console.log("submit", formData)
     const resumeFile = formData.files[0]
     const reader = new FileReader()
     reader.readAsDataURL(resumeFile)
@@ -35,7 +39,7 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
     reader.onload = () => {
       const dataURL = reader.result as string
       const base64ResumeFile = dataURL.split(",")[1]
-      const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion || 1)
+      const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion! || 1)
       req.onerror = dbConfig.onError
       req.onupgradeneeded = dbConfig.onUpgradeNeeded!
       req.onsuccess = (e) => {
@@ -46,7 +50,24 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
           .objectStore(dbConfig.storeName!)
           .add(base64ResumeFile, "userId")
         addReq.onsuccess = (e) => {
-          console.log("file uploaded.", e)
+          // console.log("file uploaded.", e)
+          toast({
+            title: "File uploaded.",
+            action: (
+              <ToastAction
+                altText="autofill forms"
+                onClick={(e) => {
+                  e.preventDefault()
+                  navigate({
+                    to: "/fillforms",
+                  })
+                  dismiss()
+                }}
+              >
+                Autofill Forms
+              </ToastAction>
+            ),
+          })
         }
         // you may want to add a retry mechanism in here.
         addReq.onerror = dbConfig.onError

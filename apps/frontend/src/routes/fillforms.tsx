@@ -1,16 +1,19 @@
 import Preview from "@/components/custom/preview"
 import PasteLinkForm from "@/components/forms/pasteLinkForm"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, useSearch } from "@tanstack/react-router"
 import {
   ResizablePanel,
   ResizablePanelGroup,
   ResizableHandle,
-  ResizablePrimitive,
+  // ResizablePrimitive,
 } from "@/components/ui/resizable"
-import { useEffect, useRef } from "react"
 import { useFormData } from "@/lib/hooks"
 import * as z from "zod"
-import { useFillForm } from "@/lib/queries"
+import { useFillForm, useUpdateMagicSession } from "@/lib/queriesAndMutations"
+import { dbConfig } from "@/lib/utils"
+import { useSessionContext } from "@/components/session-provider"
+import { useEffect } from "react"
+import { toast } from "@/hooks/use-toast"
 
 const formLinkSchema = z.object({
   link: z.string().url("enter form URL you would like to fill. "),
@@ -21,18 +24,71 @@ export const Route = createFileRoute("/fillforms")({
 })
 
 function FillForms() {
-  // pass this ref to the PasteLinkForm component
-  const refs = useRef<HTMLElement>()
-  const [formData, setFormData] = useFormData<z.infer<typeof formLinkSchema>>()
-  const { mutateAsync } = useFillForm()
-  const fillForm = (resume: string, url: string) => mutateAsync({ resume, url })
+  const searchParams: {
+    userId: string
+    secret: string
+  } = useSearch({
+    from: Route.id,
+  })
+
+  // create a session at the root level.
+  const { setSession } = useSessionContext()
+
+
+  const { data, isPending, isSuccess } = useUpdateMagicSession(
+    searchParams.userId,
+    searchParams.secret,
+  )
 
   useEffect(() => {
-    const previewPanel = ResizablePrimitive.getPanelElement("preview")
-    if (previewPanel) {
-      refs.current = previewPanel
+    if (isSuccess) {
+      setSession(data)
+      // here's a txn.
+      const openReq = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion! || 1)
+      openReq.onerror = dbConfig.onError
+      openReq.onupgradeneeded = dbConfig.onUpgradeNeeded!
+      openReq.onsuccess = () => {
+        const db = openReq.result
+        const addReq = db
+          .transaction("session", "readwrite")
+          .objectStore("session")
+          .add(data, data?.userId)
+        // you may want to add a retry mechanism in here.
+        addReq.onerror = dbConfig.onError
+      }
     }
-  }, [])
+  }, [isSuccess])
+
+  const [formData, setFormData] = useFormData<z.infer<typeof formLinkSchema>>()
+  const { mutateAsync, data: autofillRes } = useFillForm()
+  const fillForm = async (resume: string, url: string) => await mutateAsync({ resume, url })
+
+  if (data) {
+    // toast for success
+    toast({
+      title: "Session is created",
+      description: "you can start autofilling your forms now."
+    })
+  }
+
+  if (isPending && Boolean(searchParams.userId)) {
+    // toast for creating session.
+    toast({
+      title: "Creating session...",
+      description: "please wait! creating a session for you."
+    })
+  }
+
+  // pass this ref to the PasteLinkForm component
+  // const refs = useRef<HTMLElement>()
+
+  // use this when you want to resize the panels automatically on fill out click.
+  // useEffect(() => {
+  //   const previewPanel = ResizablePrimitive.getPanelElement("preview")
+  //   if (previewPanel) {
+  //     refs.current = previewPanel
+  //   }
+  // }, [])
 
   return (
     <ResizablePanelGroup
@@ -46,7 +102,7 @@ function FillForms() {
         className="size-full"
         id="preview"
       >
-        <Preview src={formData?.link!} />
+        <Preview src={formData?.link!} autofillRes={autofillRes} />
       </ResizablePanel>
       <ResizableHandle className="bg-secondary/20 m-2 w-[2px] rounded-lg" />
       <ResizablePanel minSize={50} className="@container flex justify-center">

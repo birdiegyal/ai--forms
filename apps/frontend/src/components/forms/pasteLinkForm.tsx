@@ -21,6 +21,7 @@ interface PasteLinkFormProps<T extends z.ZodObject<any, any, any, any, any>>
   fillForm: (resume: string, url: string) => any
 }
 
+
 export default function PasteLinkForm({
   className,
   setFormData,
@@ -45,6 +46,7 @@ export default function PasteLinkForm({
     resolver: zodResolver(formLinkSchema),
   })
 
+  // don't submit unless you've got the user is logged in or atleast a guest.
   function onSubmit(formData: z.infer<typeof formLinkSchema>) {
     setFormData(formData)
 
@@ -52,16 +54,22 @@ export default function PasteLinkForm({
     req.onerror = dbConfig.onError
     req.onsuccess = (e) => {
       const db = req.result
-      const resumePdfReq = db.transaction(dbConfig.storeName!)
+      const resumePdfReq = db
+        .transaction(dbConfig.storeName!)
         .objectStore(dbConfig.storeName!)
+        // replace userId with the unique userId/user.
         .get("userId")
+
       resumePdfReq.onerror = dbConfig.onError
-      resumePdfReq.onsuccess = (e) => {
-        fillForm(resumePdfReq.result, formData.link)
+      resumePdfReq.onsuccess = async (e) => {
+        const res = await fillForm(resumePdfReq.result, formData.link)
+
       }
     }
 
-    form.reset()
+    form.reset({
+      link: "",
+    })
   }
 
   return (

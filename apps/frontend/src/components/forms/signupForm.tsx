@@ -12,6 +12,8 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/lib/utils"
 import React from "react"
+import { useGetMagicLink } from "@/lib/queriesAndMutations"
+import { toast } from "@/hooks/use-toast"
 
 interface SignupFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
@@ -20,12 +22,24 @@ const signupFormSchema = z.object({
 })
 
 export default function SignupForm({ className }: SignupFormProps) {
+  const { mutateAsync: getMagicLink } = useGetMagicLink()
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
   })
-  function onSubmit(formData: z.infer<typeof signupFormSchema>) {
+  
+  async function onSubmit(formData: z.infer<typeof signupFormSchema>) {
     console.log(formData)
-    form.reset()
+    const res = await getMagicLink({ email: formData.email, redirectTo: "http://localhost:3001/fillforms" })
+
+    if (res !== undefined) {
+      toast({
+        title: "Magic URL sent",
+        description: "check your email inbox."
+      })
+    }
+    form.reset({
+      email: ""
+    })
   }
 
   return (
@@ -54,7 +68,10 @@ export default function SignupForm({ className }: SignupFormProps) {
           }}
         ></FormField>
 
-      <Button type="submit" className="h-8 btn transition-opacity focus-visible:ring-primary btn-primary">
+        <Button
+          type="submit"
+          className="btn focus-visible:ring-primary btn-primary h-8 transition-opacity"
+        >
           Get magic URL
         </Button>
       </form>

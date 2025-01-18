@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "adds event listeners into iframe's window.",
+  "version": "1.0",
+  "permissions": ["<all_urls>"],
+  "host_permissions": ["<all_urls>"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "exclude_globs": ["http://localhost/*", "*.vercel.app"],
+      "js": ["content-script.js"],
+      "all_frames": true
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
