@@ -75,3 +75,14 @@ export async function getCurrentUser() {
     return
   }
 }
+
+export async function deleteSession(sessionId: string) {
+  try {
+    const res = await account.deleteSession(sessionId)
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+

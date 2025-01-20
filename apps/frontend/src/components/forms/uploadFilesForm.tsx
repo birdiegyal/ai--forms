@@ -11,11 +11,13 @@ import {
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import React from "react"
+import React, { useState } from "react"
 import { dbConfig } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useNavigate } from "@tanstack/react-router"
+import { LoaderCircle } from "lucide-react"
+
 interface UploadFilesFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
 const uploadFilesSchema = z.object({
@@ -29,50 +31,64 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
   })
   const { toast, dismiss } = useToast()
   const navigate = useNavigate()
+  const [isPending, setIsPending] = useState<Boolean>(false)
 
   function onSubmit(formData: z.infer<typeof uploadFilesSchema>) {
-    const resumeFile = formData.files[0]
-    const reader = new FileReader()
-    reader.readAsDataURL(resumeFile)
+    console.log(formData.files)
+    setIsPending(true)
 
-    reader.onload = () => {
-      const dataURL = reader.result as string
-      const base64ResumeFile = dataURL.split(",")[1]
-      const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion! || 1)
-      req.onerror = dbConfig.onError
-      req.onupgradeneeded = dbConfig.onUpgradeNeeded!
-      req.onsuccess = (e) => {
-        e.preventDefault()
-        const db = req.result
-        const addReq = db
-          .transaction(dbConfig.storeName!, "readwrite")
-          .objectStore(dbConfig.storeName!)
-          .add(base64ResumeFile, "userId")
-        addReq.onsuccess = (e) => {
-          // console.log("file uploaded.", e)
-          toast({
-            title: "File uploaded.",
-            action: (
-              <ToastAction
-                altText="autofill forms"
-                onClick={(e) => {
-                  e.preventDefault()
-                  navigate({
-                    to: "/fillforms",
-                  })
-                  dismiss()
-                }}
-              >
-                Autofill Forms
-              </ToastAction>
-            ),
-          })
+    try {
+      const resumeFile = formData.files[0]
+      const reader = new FileReader()
+      reader.readAsDataURL(resumeFile)
+
+      reader.onload = () => {
+        const dataURL = reader.result as string
+        const base64ResumeFile = dataURL.split(",")[1]
+        const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion! || 1)
+        req.onerror = dbConfig.onError
+        req.onupgradeneeded = dbConfig.onUpgradeNeeded!
+        req.onsuccess = (e) => {
+          e.preventDefault()
+          const db = req.result
+          const addReq = db
+            .transaction(dbConfig.storeName!, "readwrite")
+            .objectStore(dbConfig.storeName!)
+            .add(base64ResumeFile, "userId")
+          addReq.onsuccess = (e) => {
+            toast({
+              className:
+                "bg-primary text-primary-foreground stroke-primary-foreground ",
+              title: "File uploaded.",
+              action: (
+                <ToastAction
+                  className="text-primary-foreground border-primary-foreground ring-offset-primary-foreground hover:bg-primary-foreground/10 hover:shadow-xl focus:ring-0"
+                  altText="autofill forms"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    navigate({
+                      to: "/fillforms",
+                    })
+                    dismiss()
+                  }}
+                >
+                  Autofill Forms
+                </ToastAction>
+              ),
+            })
+          }
+          // you may want to add a retry mechanism in here.
+          addReq.onerror = dbConfig.onError
         }
-        // you may want to add a retry mechanism in here.
-        addReq.onerror = dbConfig.onError
       }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      form.reset({
+        files: undefined,
+      })
+      setIsPending(false)
     }
-    form.reset()
   }
 
   return (
@@ -98,9 +114,20 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
         <Button
           type="submit"
           variant={"secondary"}
-          className="btn btn-secondary focus-visible:ring-secondary h-8"
+          className="btn btn-secondary focus-visible:ring-secondary flex h-8 justify-center"
         >
-          Upload
+          {isPending ? (
+            <>
+              <LoaderCircle className="animate-spin justify-self-end stroke-2" />
+              <p className="justify-self-start font-medium capitalize">
+                uploading...
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-medium capitalize">upload</p>
+            </>
+          )}
         </Button>
       </form>
     </Form>

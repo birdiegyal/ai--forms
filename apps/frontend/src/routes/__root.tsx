@@ -73,6 +73,7 @@ function RootComponent() {
         <Toaster />
         <ToggleTheme></ToggleTheme>
       </SessionProvider>
+      <TanStackRouterDevtools />
     </ThemeProvider>
   )
 }

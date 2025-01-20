@@ -1,15 +1,14 @@
 import { DragEvent, MouseEvent, ReactNode, useRef, useState } from "react"
 import FileUploadIcon from ">/visuals/uploadFiles.svg"
 import { Input } from "@/components/ui/input"
-import { useFormContext } from "react-hook-form"
+import { useFormContext, useWatch } from "react-hook-form"
 import { File, X } from "lucide-react"
 interface DragDropProps {
-  children?: ReactNode
   name: string
   onChange: (...e: any[]) => void
 }
 
-export function DragDrop({ children, name, onChange }: DragDropProps) {
+export function DragDrop({ name, onChange }: DragDropProps) {
   const filesInputRef = useRef<HTMLInputElement>(null)
   const form = useFormContext()
   const fileRef = form.register(name)
@@ -70,14 +69,13 @@ export function DragDrop({ children, name, onChange }: DragDropProps) {
         {...fileRef}
         type="file"
         accept=".pdf"
-        // multiple={true}
+        multiple={true}
         className="hidden"
         ref={filesInputRef}
         onChange={(e) => {
-          onChange(e.currentTarget.files!)
+          onChange(e.currentTarget.files)
         }}
       />
-      {children}
     </div>
   )
 }

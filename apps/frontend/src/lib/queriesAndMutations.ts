@@ -1,4 +1,4 @@
-import { fillForm, getMagicLink, updateMagicSession } from "@/lib/appwrite"
+import { deleteSession, fillForm, getMagicLink, updateMagicSession } from "@/lib/appwrite"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
 export function useFillForm() {
@@ -27,5 +27,12 @@ export function useUpdateMagicSession(userId: string, secret: string) {
     queryFn: () => updateMagicSession(userId, secret),
     queryKey: ["updateMagicSession", secret],
     enabled: Boolean(userId && secret),
+  })
+}
+
+export function useDeleteSession() {
+  return useMutation({
+    mutationFn: (sessionId: string) => deleteSession(sessionId),
+    // you may want to invalidate the query to update magic session.
   })
 }

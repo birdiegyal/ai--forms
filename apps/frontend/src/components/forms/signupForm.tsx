@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,14 +23,12 @@ const signupFormSchema = z.object({
 })
 
 export default function SignupForm({ className }: SignupFormProps) {
-  const { mutateAsync: getMagicLink } = useGetMagicLink()
+  const { mutateAsync: getMagicLink, isPending } = useGetMagicLink()
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
   })
 
   async function onSubmit(formData: z.infer<typeof signupFormSchema>) {
-    console.log(formData)
-
     const res = await getMagicLink({
       email: formData.email,
       redirectTo:
@@ -75,9 +74,21 @@ export default function SignupForm({ className }: SignupFormProps) {
 
         <Button
           type="submit"
-          className="btn focus-visible:ring-primary btn-primary h-8 transition-opacity"
+          className="btn focus-visible:ring-primary btn-primary h-8 transition-opacity flex justify-center"
         >
-          Get magic URL
+          {" "}
+          {isPending ? (
+            <>
+              <LoaderCircle className="animate-spin justify-self-end stroke-2" />
+              <p className="justify-self-start font-medium capitalize">
+                getting magic url...
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-medium capitalize">Get magic URL</p>
+            </>
+          )}
         </Button>
       </form>
     </Form>
