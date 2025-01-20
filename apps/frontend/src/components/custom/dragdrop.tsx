@@ -1,4 +1,11 @@
-import { DragEvent, MouseEvent, ReactNode, useRef, useState } from "react"
+import {
+  DragEvent,
+  MouseEvent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import FileUploadIcon from ">/visuals/uploadFiles.svg"
 import { Input } from "@/components/ui/input"
 import { useFormContext, useWatch } from "react-hook-form"
@@ -12,7 +19,10 @@ export function DragDrop({ name, onChange }: DragDropProps) {
   const filesInputRef = useRef<HTMLInputElement>(null)
   const form = useFormContext()
   const fileRef = form.register(name)
-  const [files, setFiles] = useState<File[]>([])
+  const formValues: FileList | undefined = useWatch({
+    name,
+    defaultValue: undefined,
+  })
 
   function makeDroppable(e: DragEvent<HTMLDivElement>) {
     // go through the files and only accept file type application/pdf.
@@ -31,18 +41,19 @@ export function DragDrop({ name, onChange }: DragDropProps) {
     e.currentTarget.classList.remove("bg-primary/10", "border-primary")
     // access dropped file
     onChange(e.dataTransfer.files)
-    setFiles(Array.from(form.getValues("files")))
   }
 
   function onClick(e: MouseEvent) {
     e.preventDefault()
     filesInputRef.current?.showPicker()
+    // to allow uploading the same file twice in a row.
+    filesInputRef.current!.value = ""
   }
 
   function removeFile(e: MouseEvent, thisFile: File) {
     e.preventDefault()
     e.stopPropagation()
-    setFiles((files) => files.filter((file) => file.name !== thisFile.name))
+    form.setValue(name, Array.from(formValues!).filter((file) => file.name !== thisFile.name))
   }
 
   return (
@@ -54,9 +65,9 @@ export function DragDrop({ name, onChange }: DragDropProps) {
       onDragLeave={onDragLeave}
       onClick={onClick}
     >
-      {files.length > 0 ? (
-        files.map((file) => (
-          <FilePreviewComponent file={file} removeFile={removeFile} />
+      {formValues !== undefined && Object.keys(formValues).length !== 0 ? (
+        Array.from(formValues).map((file) => (
+          <FilePreviewComponent file={file} removeFile={removeFile} key={file.name} />
         ))
       ) : (
         <img
@@ -69,7 +80,6 @@ export function DragDrop({ name, onChange }: DragDropProps) {
         {...fileRef}
         type="file"
         accept=".pdf"
-        multiple={true}
         className="hidden"
         ref={filesInputRef}
         onChange={(e) => {
@@ -89,18 +99,17 @@ function FilePreviewComponent({
 }) {
   return (
     <div
-      className="flex w-full items-center justify-between rounded-md border px-4 py-2"
-      key={file.name}
+      className="hover:bg-accent/40 group flex w-full items-center justify-between rounded-md border px-4 py-2 transition-colors"
+      onClick={e => e.stopPropagation()}
     >
-      <div className="flex items-center justify-center gap-4">
-        <File></File>
-        <div className="flex flex-col">
-          <p className="text-foreground text-base">{file.name}</p>
-          <p className="text-muted-foreground/50 text-sm">{`${file.size / 1e3} kb`}</p>
-        </div>
+      <File size={24} />
+      <div className="flex w-10/12 flex-col gap-1">
+        <p className="text-foreground w-full truncate text-base">{file.name}</p>
+        <span className="text-muted-foreground/50 text-sm">{`${file.size / 1e3} KB`}</span>
       </div>
       <X
-        className="stroke-destructive hover:bg-destructive/20 hover:border-destructive/40 rounded-full border-2 border-transparent transition-all"
+        className="stroke-destructive/50 hover:bg-destructive/20 hover:border-destructive/40 hover:stroke-destructive invisible justify-self-end rounded-md border-2 border-transparent transition-all group-hover:visible"
+        size={24}
         onClick={(e) => removeFile(e, file)}
       ></X>
     </div>

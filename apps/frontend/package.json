@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@birdiegyal/postcss-hsl-trans": "^1.0.0",
-    "@hookform/devtools": "^4.3.1",
+    "@hookform/devtools": "^4.3.3",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tanstack/eslint-plugin-query": "^5.62.16",
     "@tanstack/router-plugin": "^1.77.7",

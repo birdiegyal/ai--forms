@@ -1,3 +1,4 @@
+import { DevTool } from "@hookform/devtools"
 import { DragDrop } from "@/components/custom/dragdrop"
 import { Button } from "@/components/ui/button"
 import {
@@ -27,14 +28,18 @@ const uploadFilesSchema = z.object({
 export default function UploadFilesForm({ className }: UploadFilesFormProps) {
   const form = useForm<z.infer<typeof uploadFilesSchema>>({
     resolver: zodResolver(uploadFilesSchema),
-    mode: "onChange",
+    mode: "onTouched",
+    defaultValues: {
+      files: undefined,
+    },
   })
   const { toast, dismiss } = useToast()
   const navigate = useNavigate()
+
+  // we really dont need this because its so fast.
   const [isPending, setIsPending] = useState<Boolean>(false)
 
   function onSubmit(formData: z.infer<typeof uploadFilesSchema>) {
-    console.log(formData.files)
     setIsPending(true)
 
     try {
@@ -78,11 +83,26 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
             })
           }
           // you may want to add a retry mechanism in here.
-          addReq.onerror = dbConfig.onError
+          addReq.onerror = (e) => {
+            e.preventDefault()
+            if (addReq.error?.name === "ConstraintError") {
+              toast({
+                className: "bg-destructive text-destructive-foreground",
+                title: "File not uploaded.",
+                description:
+                  "a file is already uploaded and we dont support multi file uploads right now.",
+                duration: 100000,
+              })
+            }
+          }
         }
       }
     } catch (error) {
       console.error(error)
+      toast({
+        className: "capitalize bg-destruction text-destruction-foreground",
+        title: "file not uploaded",
+      })
     } finally {
       form.reset({
         files: undefined,
@@ -130,6 +150,7 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
           )}
         </Button>
       </form>
+      <DevTool control={form.control} />
     </Form>
   )
 }
