@@ -29,21 +29,32 @@ export default function SignupForm({ className }: SignupFormProps) {
   })
 
   async function onSubmit(formData: z.infer<typeof signupFormSchema>) {
-    const res = await getMagicLink({
-      email: formData.email,
-      redirectTo:
-        import.meta.env.VITE_REDIRECT_URL || "http://localhost:3001/fillforms", //port should be a param here.
-    })
+    try {
+      const res = await getMagicLink({
+        email: formData.email,
+        redirectTo:
+          // import.meta.env.VITE_REDIRECT_URL ||
+          "http://localhost:3001/fillforms", //port should be a param here.
+      })
 
-    if (res !== undefined) {
+      if (res !== undefined) {
+        toast({
+          title: "Magic URL sent",
+          description: "check your email inbox.",
+          className: "bg-primary text-primary-foreground ",
+        })
+      }
+    } catch (error) {
+      console.error(error)
       toast({
-        title: "Magic URL sent",
-        description: "check your email inbox.",
+        title: "Magic URL not sent",
+        className: "bg-destructive text-destructive-foreground ",
+      })
+    } finally {
+      form.reset({
+        email: "",
       })
     }
-    form.reset({
-      email: "",
-    })
   }
 
   return (
@@ -74,9 +85,8 @@ export default function SignupForm({ className }: SignupFormProps) {
 
         <Button
           type="submit"
-          className="btn focus-visible:ring-primary btn-primary h-8 transition-opacity flex justify-center"
+          className="btn focus-visible:ring-primary btn-primary flex h-8 justify-center transition-opacity"
         >
-          {" "}
           {isPending ? (
             <>
               <LoaderCircle className="animate-spin justify-self-end stroke-2" />

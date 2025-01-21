@@ -1,4 +1,4 @@
-import { DevTool } from "@hookform/devtools"
+// import { DevTool } from "@hookform/devtools"
 import { DragDrop } from "@/components/custom/dragdrop"
 import { Button } from "@/components/ui/button"
 import {
@@ -91,7 +91,6 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
                 title: "File not uploaded.",
                 description:
                   "a file is already uploaded and we dont support multi file uploads right now.",
-                duration: 100000,
               })
             }
           }
@@ -150,7 +149,7 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
           )}
         </Button>
       </form>
-      <DevTool control={form.control} />
+      {/* <DevTool control={form.control} /> */}
     </Form>
   )
 }

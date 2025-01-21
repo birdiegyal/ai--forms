@@ -20,22 +20,12 @@ export async function fillForm(resumePdf: string, url: string) {
       },
     )
 
-    if(promise.ok) {
-      toast({
-        title: "Autofilled",
-        description:
-          "Checkout the autofilled values in the preview before submitting.",
-      })
-    } else {
-      // add try again action.
-      toast({
-        title: "Autofill failed"
-      })
-    }
-
     // type this better.
-    const result = await promise.json()
-    return result
+    if (promise.ok) {
+      const result = await promise.json()
+      return JSON.parse(result)
+    }
+    return
   } catch (error) {
     console.error(error)
     return
@@ -84,5 +74,3 @@ export async function deleteSession(sessionId: string) {
     console.error(error)
   }
 }
-
-

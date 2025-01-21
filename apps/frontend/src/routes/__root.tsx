@@ -1,10 +1,10 @@
+// import { TanStackRouterDevtools } from "@tanstack/router-devtools"
 import {
   Link,
   Outlet,
   createRootRoute,
   useLocation,
 } from "@tanstack/react-router"
-import { TanStackRouterDevtools } from "@tanstack/router-devtools"
 import "@/global.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "@/components/session-provider"
@@ -73,7 +73,7 @@ function RootComponent() {
         <Toaster />
         <ToggleTheme></ToggleTheme>
       </SessionProvider>
-      <TanStackRouterDevtools />
+      {/* <TanStackRouterDevtools /> */}
     </ThemeProvider>
   )
 }

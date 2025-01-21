@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,20 +14,22 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import React from "react"
 import { cn } from "@/lib/utils"
 import { dbConfig } from "@/lib/utils"
+import { toast } from "@/hooks/use-toast"
 
 interface PasteLinkFormProps<T extends z.ZodObject<any, any, any, any, any>>
   extends React.HTMLAttributes<HTMLFormElement> {
   formLinkSchema: T
   setFormData: React.Dispatch<z.infer<T>>
   fillForm: (resume: string, url: string) => any
+  isFillingForm: boolean
 }
-
 
 export default function PasteLinkForm({
   className,
   setFormData,
   formLinkSchema,
   fillForm,
+  isFillingForm,
 }: PasteLinkFormProps<
   z.ZodObject<
     {
@@ -50,26 +53,41 @@ export default function PasteLinkForm({
   function onSubmit(formData: z.infer<typeof formLinkSchema>) {
     setFormData(formData)
 
-    const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion || 1)
-    req.onerror = dbConfig.onError
-    req.onsuccess = (e) => {
-      const db = req.result
-      const resumePdfReq = db
-        .transaction(dbConfig.storeName!)
-        .objectStore(dbConfig.storeName!)
-        // replace userId with the unique userId/user.
-        .get("userId")
+    try {
+      const req = indexedDB.open(dbConfig.dbName, dbConfig.dbVersion || 1)
+      req.onerror = dbConfig.onError
+      req.onsuccess = (e) => {
+        const db = req.result
+        const resumePdfReq = db
+          .transaction(dbConfig.storeName!)
+          .objectStore(dbConfig.storeName!)
+          // replace userId with the unique userId/user.
+          .get("userId")
 
-      resumePdfReq.onerror = dbConfig.onError
-      resumePdfReq.onsuccess = async (e) => {
-        const res = await fillForm(resumePdfReq.result, formData.link)
+        resumePdfReq.onerror = dbConfig.onError
+        resumePdfReq.onsuccess = async (e) => {
+          const res = await fillForm(resumePdfReq.result, formData.link)
 
+          if (res !== undefined) {
+            toast({
+              title: "Form autofilled",
+              className: "bg-primary text-primary-foreground",
+            })
+          } else {
+            toast({
+              title: "Couldn't autofill your form",
+              className: "bg-destructive text-destructive-foreground",
+            })
+          }
+        }
       }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      form.reset({
+        link: "",
+      })
     }
-
-    form.reset({
-      link: "",
-    })
   }
 
   return (
@@ -103,9 +121,20 @@ export default function PasteLinkForm({
         <Button
           type="submit"
           variant={"secondary"}
-          className="btn btn-secondary focus-visible:ring-secondary h-8"
+          className="btn btn-secondary focus-visible:ring-secondary flex h-8 justify-center"
         >
-          Fill out
+          {isFillingForm ? (
+            <>
+              <LoaderCircle className="animate-spin justify-self-end stroke-2" />
+              <p className="justify-self-start font-medium capitalize">
+                autofilling your form...
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-medium capitalize">autofill</p>
+            </>
+          )}
         </Button>
       </form>
     </Form>

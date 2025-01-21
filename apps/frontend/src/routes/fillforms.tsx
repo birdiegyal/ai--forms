@@ -24,6 +24,7 @@ export const Route = createFileRoute("/fillforms")({
 })
 
 function FillForms() {
+  console.count("re-render")
   const searchParams: {
     userId: string
     secret: string
@@ -34,11 +35,11 @@ function FillForms() {
   // create a session at the root level.
   const { setSession } = useSessionContext()
 
-
-  const { data, isPending, isSuccess } = useUpdateMagicSession(
-    searchParams.userId,
-    searchParams.secret,
-  )
+  const {
+    data,
+    isPending: isUpdatingMagicSession,
+    isSuccess,
+  } = useUpdateMagicSession(searchParams.userId, searchParams.secret)
 
   useEffect(() => {
     if (isSuccess) {
@@ -60,22 +61,29 @@ function FillForms() {
   }, [isSuccess])
 
   const [formData, setFormData] = useFormData<z.infer<typeof formLinkSchema>>()
-  const { mutateAsync, data: autofillRes } = useFillForm()
-  const fillForm = async (resume: string, url: string) => await mutateAsync({ resume, url })
+  const {
+    mutateAsync,
+    isPending: isFillingForm,
+    data: autofillRes,
+  } = useFillForm()
+  const fillForm = async (resume: string, url: string) =>
+    await mutateAsync({ resume, url })
 
   if (data) {
     // toast for success
     toast({
       title: "Session is created",
-      description: "you can start autofilling your forms now."
+      className: "bg-primary text-primary-foreground",
+      description: "you can start autofilling your forms now.",
     })
   }
-
-  if (isPending && Boolean(searchParams.userId)) {
+  
+  if (isUpdatingMagicSession && Boolean(searchParams.userId)) {
     // toast for creating session.
     toast({
       title: "Creating session...",
-      description: "please wait! creating a session for you."
+      className: "bg-primary text-primary-foreground",
+      description: "please wait! creating a session for you.",
     })
   }
 
@@ -111,6 +119,7 @@ function FillForms() {
           // className="sm:w-full lg:w-2/5 xl:w-1/2 2xl:w-1/3"
         >
           <PasteLinkForm
+            isFillingForm={isFillingForm}
             fillForm={fillForm}
             setFormData={setFormData}
             formLinkSchema={formLinkSchema}
