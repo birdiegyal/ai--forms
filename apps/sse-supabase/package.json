@@ -1,0 +1,8 @@
+{
+  "name": "sse-supabase",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "author": "birdiegyal",
+  "description": "serverless function to test SSE."
+}

@@ -17,7 +17,7 @@ import { dbConfig } from "@/lib/utils"
 import { useToast } from "@/hooks/use-toast"
 import { ToastAction } from "@/components/ui/toast"
 import { useNavigate } from "@tanstack/react-router"
-import { LoaderCircle } from "lucide-react"
+import { LoaderCircle, SquareMousePointer } from "lucide-react"
 
 interface UploadFilesFormProps extends React.HTMLAttributes<HTMLFormElement> {}
 
@@ -35,9 +35,7 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
   })
   const { toast, dismiss } = useToast()
   const navigate = useNavigate()
-
-  // we really dont need this because its so fast.
-  const [isPending, setIsPending] = useState<Boolean>(false)
+  const [isPending, setIsPending] = useState(false)
 
   function onSubmit(formData: z.infer<typeof uploadFilesSchema>) {
     setIsPending(true)
@@ -67,7 +65,7 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
               title: "File uploaded.",
               action: (
                 <ToastAction
-                  className="text-primary-foreground border-primary-foreground ring-offset-primary-foreground hover:bg-primary-foreground/10 hover:shadow-xl focus:ring-0"
+                  className="hover:bg-primary toast-action-btn focus:ring-primary-foreground flex h-8 items-center gap-1 border-0 ring-offset-0"
                   altText="autofill forms"
                   onClick={(e) => {
                     e.preventDefault()
@@ -77,7 +75,8 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
                     dismiss()
                   }}
                 >
-                  Autofill Forms
+                  <SquareMousePointer className="stroke-2" size={18} />
+                  <p>Autofill Forms</p>
                 </ToastAction>
               ),
             })
@@ -133,18 +132,17 @@ export default function UploadFilesForm({ className }: UploadFilesFormProps) {
         <Button
           type="submit"
           variant={"secondary"}
-          className="btn btn-secondary focus-visible:ring-secondary flex h-8 justify-center"
+          className="btn-secondary btn focus-visible:ring-secondary flex h-10 rounded-xl justify-center font-bold capitalize transition"
+          disabled={isPending}
         >
           {isPending ? (
             <>
               <LoaderCircle className="animate-spin justify-self-end stroke-2" />
-              <p className="justify-self-start font-medium capitalize">
-                uploading...
-              </p>
+              <p className="justify-self-start">uploading...</p>
             </>
           ) : (
             <>
-              <p className="font-medium capitalize">upload</p>
+              <p>upload</p>
             </>
           )}
         </Button>

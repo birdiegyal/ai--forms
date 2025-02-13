@@ -1,9 +1,14 @@
 import cors from "cors"
 import express, { Request, Response, NextFunction } from "express"
-import { createProxyMiddleware, Options } from "http-proxy-middleware"
+import {
+  createProxyMiddleware,
+  Options,
+  responseInterceptor
+} from "http-proxy-middleware"
+import { loadBuffer } from "cheerio"
 
 const app = express()
-app.use(cors()) 
+app.use(cors())
 
 // @ts-ignore
 app.use("/", function (req: Request, res: Response, next: NextFunction) {
@@ -19,11 +24,20 @@ app.use("/", function (req: Request, res: Response, next: NextFunction) {
     target: targetUrl,
     changeOrigin: true,
     timeout: 30000,
+    proxyTimeout: 30000,
+    followRedirects: true,
+    selfHandleResponse: true,
     secure: false,
     on: {
-      proxyRes: (proxyRes, req, res) => {
+      proxyRes: responseInterceptor(async (responseBuffer, proxyRes) => {
         proxyRes.headers["Access-Control-Allow-Origin"] = "*"
-      }
+
+        // you only want to do this if mime type of the response is plain/html
+        console.log(proxyRes.headers)
+        
+        const html = loadBuffer(responseBuffer)
+        return responseBuffer
+      })
     }
   }
 

@@ -12,5 +12,5 @@
   // specifying to recognize css files as tailwindcss files.
   "files.associations": {
     "global.css": "tailwindcss"
-  }
+  },
 }

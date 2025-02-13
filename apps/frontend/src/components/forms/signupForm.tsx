@@ -74,7 +74,7 @@ export default function SignupForm({ className }: SignupFormProps) {
                     {...field}
                     type="email"
                     placeholder="Email"
-                    className="h-8 border-2"
+                    className="h-10 rounded-xl border border-border"
                   />
                 </FormControl>
                 <FormMessage />
@@ -85,18 +85,19 @@ export default function SignupForm({ className }: SignupFormProps) {
 
         <Button
           type="submit"
-          className="btn focus-visible:ring-primary btn-primary flex h-8 justify-center transition-opacity"
+          className="btn focus-visible:ring-primary btn-primary flex h-10 justify-center transition-opacity rounded-xl"
+          disabled={isPending}
         >
           {isPending ? (
             <>
               <LoaderCircle className="animate-spin justify-self-end stroke-2" />
-              <p className="justify-self-start font-medium capitalize">
+              <p className="justify-self-start font-bold capitalize">
                 getting magic url...
               </p>
             </>
           ) : (
             <>
-              <p className="font-medium capitalize">Get magic URL</p>
+              <p className="font-bold capitalize">Get magic URL</p>
             </>
           )}
         </Button>

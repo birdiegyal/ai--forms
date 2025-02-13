@@ -18,7 +18,7 @@ export default defineConfig({
         target: "http://localhost:3000/",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/proxy/, ""),
-        configure: (proxy, options) => {
+        configure: (proxy) => {
           proxy.on("proxyReq", (proxyReq, req) => {
             const targetUrl = req.url?.split("?url=")[1]
             if (targetUrl) {

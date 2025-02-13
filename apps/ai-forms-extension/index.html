@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <script src="/src/main.ts" defer type="module"></script>
+    <title>AI Forms extension</title>
+  </head>
+  <body
+    class="flex h-screen w-screen flex-col items-center justify-center gap-8 p-8"
+  >
+    <section
+      class="relative flex h-full w-full flex-col items-center justify-between gap-8"
+    >
+      <form class="flex flex-col gap-8">
+        <div class="flex flex-col gap-1">
+          <label for="uploadFiles" class="font-display text-xl capitalize"
+            >upload files</label
+          >
+          <div class="w-full rounded-md border border-[var(--border)] p-4">
+            <input
+              type="file"
+              name="uploadFiles"
+              id="uploadFiles"
+              multiple
+              hidden
+            />
+            <div class="pages">
+              <div class="page"></div>
+              <div class="page"></div>
+            </div>
+            <h3 class="font-display text-center italic">
+              Drag and drop your files here or select them to upload.
+            </h3>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label
+            for="customInstructions"
+            class="font-display text-xl capitalize"
+            >custom instructions</label
+          >
+          <div class="relative">
+            <textarea
+              name="customInstructions"
+              id="customInstructions"
+              placeholder="e.g. I prefer working remotely but if the employer is sponsoring the H-1B Visa then im ready to relocate so choose the Job location accordingly. I’m expecting a salary ranging somewhere in between $200-300k."
+              class="placeholder-shown::text-var(--accent-foreground) w-full rounded-md border border-[var(--border)] p-4 text-xs placeholder-shown:text-xs resize-none"
+              rows="8"
+            ></textarea>
+            <button
+              type="button"
+              class="secondary-button absolute bottom-4 right-2"
+            >
+              set as default
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="primary-button">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="icon">
+              <path
+                id="Vector"
+                d="M12.034 12.681C11.9979 12.5906 11.9892 12.4915 12.0088 12.3962C12.0285 12.3008 12.0756 12.2133 12.1445 12.1445C12.2133 12.0756 12.3008 12.0285 12.3962 12.0088C12.4915 11.9892 12.5906 11.9979 12.681 12.034L21.681 15.534C21.7775 15.5717 21.8599 15.6384 21.9168 15.725C21.9737 15.8116 22.0023 15.9137 21.9987 16.0172C21.9951 16.1207 21.9594 16.2206 21.8966 16.3029C21.8337 16.3853 21.7469 16.4461 21.648 16.477L18.204 17.545C18.0486 17.593 17.9073 17.6783 17.7923 17.7933C17.6773 17.9083 17.592 18.0496 17.544 18.205L16.477 21.648C16.4461 21.7469 16.3853 21.8337 16.3029 21.8966C16.2206 21.9594 16.1207 21.9951 16.0172 21.9987C15.9137 22.0023 15.8116 21.9737 15.725 21.9168C15.6384 21.8599 15.5717 21.7775 15.534 21.681L12.034 12.681Z"
+                stroke="#212529"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                id="Vector_2"
+                d="M21 11V5C21 4.46957 20.7893 3.96086 20.4142 3.58579C20.0391 3.21071 19.5304 3 19 3H5C4.46957 3 3.96086 3.21071 3.58579 3.58579C3.21071 3.96086 3 4.46957 3 5V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21H11"
+                stroke="#212529"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </g>
+          </svg>
+
+          <p>autofill</p>
+        </button>
+      </form>
+
+      <footer class="flex w-fit items-center justify-center gap-2 capitalize">
+        <b class="italic">AI forms.</b>
+        <div class="w-[2px] rounded h-6 bg-[var(--border)]"></div>
+        <p class="">data policy</p>
+      </footer>
+    </section>
+
+    <div data-section="dataPolicy" class="hidden">
+      <p>
+        We store your data (uploaded files) in your device (browser’s indexedDB)
+        encoded in base64 format. For backup and multi-device support purpose,
+        we have to keep a copy of it in our server side storage which we
+        guarantee to be secure.
+      </p>
+
+      <p>
+        Other than that, we don’t use it for finetuning the LLM used for the
+        Autofill. User data is sent to the server side everytime you request to
+        Autofill.
+      </p>
+
+      <p>
+        Data Policy is subjected to change and changes will be notified to you
+        via email.
+      </p>
+    </div>
+  </body>
+</html>

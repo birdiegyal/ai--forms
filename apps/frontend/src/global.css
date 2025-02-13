@@ -93,7 +93,7 @@
 
 @layer utilities {
   a.active {
-    @apply origin-bottom scale-125 text-primary transition-transform first-of-type:origin-bottom-left last-of-type:origin-bottom-right sm:first-of-type:origin-bottom sm:last-of-type:origin-bottom;
+    @apply text-primary origin-bottom scale-125 transition-transform first-of-type:origin-bottom-left last-of-type:origin-bottom-right sm:first-of-type:origin-bottom sm:last-of-type:origin-bottom;
   }
 
   .btn {
@@ -101,17 +101,25 @@
     box-shadow:
       0px 12px 12px 0px hsl(var(--accent)),
       0px 4px 4px 0px hsl(var(--accent)),
-      inset 0px 0px 0px 3px hsla(var(--accent) / 0.2);
+      inset 0px 0px 0px 3px hsla(var(--accent) / 0.6);
     &:hover {
       box-shadow:
         0px 16px 16px 0px hsl(var(--accent)),
         0px 8px 8px 2px hsl(var(--accent)),
-        inset 0px 0px 0px 2px hsla(var(--accent) / 0.1);
+        inset 0px 0px 0px 2px hsla(var(--accent) / 0.5);
+    }
+  }
+
+  .toast-action-btn {
+    --accent: #dadad6;
+    transition: box-shadow 200ms linear;
+    box-shadow: inset 0px 0px 0px 3px hsla(var(--accent) / 0.2);
+    &:hover {
+      box-shadow: inset 0px 0px 0px 2px hsla(var(--accent) / 0.1);
     }
   }
 
   .btn-primary {
-    transition: background-image 400ms linear;
     background-color: inherit;
     background-image: linear-gradient(
       to bottom right,
@@ -129,7 +137,6 @@
   }
 
   .btn-secondary {
-    transition: background-image 400ms linear;
     background-color: inherit;
     background-image: linear-gradient(
       to bottom right,
@@ -142,6 +149,22 @@
         to bottom right,
         hsl(var(--secondary)) 10%,
         hsla(var(--secondary) / 0.5) 90%
+      );
+    }
+  }
+  .btn-destructive {
+    background-color: inherit;
+    background-image: linear-gradient(
+      to bottom right,
+      hsl(var(--destructive)) 10%,
+      hsla(var(--destructive) / 0.8) 90%
+    );
+
+    &:hover {
+      background-image: linear-gradient(
+        to bottom right,
+        hsl(var(--destructive)) 10%,
+        hsla(var(--destructive) / 0.5) 90%
       );
     }
   }

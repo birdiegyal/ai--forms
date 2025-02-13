@@ -53,12 +53,15 @@ export function DragDrop({ name, onChange }: DragDropProps) {
   function removeFile(e: MouseEvent, thisFile: File) {
     e.preventDefault()
     e.stopPropagation()
-    form.setValue(name, Array.from(formValues!).filter((file) => file.name !== thisFile.name))
+    form.setValue(
+      name,
+      Array.from(formValues!).filter((file) => file.name !== thisFile.name),
+    )
   }
 
   return (
     <div
-      className="border-accent ring-secondary focus-visible:ring-ring flex h-full w-full flex-wrap place-items-center justify-center gap-4 overflow-y-auto rounded-lg border p-4 shadow-lg transition-all duration-200 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:ring-1"
+      className="border-border ring-secondary focus-visible:ring-ring flex h-full w-full flex-wrap place-items-center justify-center gap-4 overflow-y-auto rounded-xl border p-4 shadow-lg transition-all duration-200 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:ring-1"
       onDragEnter={makeDroppable}
       onDragOver={makeDroppable}
       onDrop={onDrop}
@@ -67,7 +70,11 @@ export function DragDrop({ name, onChange }: DragDropProps) {
     >
       {formValues !== undefined && Object.keys(formValues).length !== 0 ? (
         Array.from(formValues).map((file) => (
-          <FilePreviewComponent file={file} removeFile={removeFile} key={file.name} />
+          <FilePreviewComponent
+            file={file}
+            removeFile={removeFile}
+            key={file.name}
+          />
         ))
       ) : (
         <img
@@ -99,8 +106,8 @@ function FilePreviewComponent({
 }) {
   return (
     <div
-      className="hover:bg-accent/40 group flex w-full items-center justify-between rounded-md border px-4 py-2 transition-colors"
-      onClick={e => e.stopPropagation()}
+      className="hover:bg-accent/50 group flex w-full items-center justify-between rounded-md border px-4 py-2 transition-all"
+      onClick={(e) => e.stopPropagation()}
     >
       <File size={24} />
       <div className="flex w-10/12 flex-col gap-1">

@@ -25,7 +25,7 @@ function RootComponent() {
         <div className="h-screen">
           <div className="grid size-full grid-rows-8 place-items-center">
             <nav
-              className="font-display mt-10 flex w-full flex-wrap items-baseline justify-between gap-7 self-start p-2 px-2 text-xs sm:mt-10 sm:justify-around sm:gap-9 sm:p-2 sm:px-4 sm:text-lg md:gap-11 md:text-2xl"
+              className="font-display flex w-full flex-wrap items-baseline justify-between gap-7 p-2 px-2 text-xs sm:justify-around sm:gap-9 sm:p-2 sm:px-4 sm:text-lg md:gap-11 md:text-2xl self-center"
               style={{
                 viewTransitionName: "navbar",
               }}

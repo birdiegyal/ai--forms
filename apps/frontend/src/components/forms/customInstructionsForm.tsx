@@ -45,7 +45,7 @@ export default function CustomInstructionForm({
                 <FormControl>
                   <Textarea
                     placeholder="e.g. I want to present myself as Mr. Perfectionist, Biased for action,  who learn from mistakes made in past."
-                    className="resize-none overflow-y-auto text-sm"
+                    className="resize-none overflow-y-auto text-sm border border-border rounded-xl" 
                     {...field}
                   ></Textarea>
                 </FormControl>
@@ -61,7 +61,7 @@ export default function CustomInstructionForm({
         <Button
           type="submit"
           variant={"secondary"}
-          className="btn btn-secondary h-8 focus-visible:ring-secondary"
+          className="btn btn-secondary h-10 rounded-xl focus-visible:ring-secondary capitalize font-bold"
         >
           Upload
         </Button>

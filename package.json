@@ -2,11 +2,7 @@
   "name": "ai-form-filler",
   "version": "1.0.0",
   "description": "ai-form-filler monorepo",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "birdiegyal",
-  "license": "ISC",
   "workspaces": [
     "apps/**/*"
   ],

@@ -79,7 +79,7 @@ export default function ToggleTheme() {
 
   return (
     <div
-      className="absolute bottom-4 right-4"
+      className="fixed bottom-4 right-4"
       style={{
         viewTransitionName: "popoverTrigger",
       }}

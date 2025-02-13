@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --border: #7e7d7d40;
+  --primary: #ebf2fa;
+  --background: #edf2f4;
+  --accent: ;
+  --foreground: #212529;
+  --accent-foreground: #353535;
+  --placeholder: #7e7d7d;
+  --secondary: #000814;
+  --secondary-foreground: #ffffff;
+
+  .dark {
+    --border: #202020;
+    --primary: #0a0908;
+    --background: #0d0106;
+    --accent: ;
+    --foreground: #f8f9fa;
+    --accent-foreground: #e9ecef;
+    --placeholder: #7e7d7d;
+    --secondary: #242423;
+    --secondary-foreground: #ffffff;
+  }
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  src: url("/InstrumentSerif-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  src: url("/InstrumentSerif-Italic.ttf") format("truetype");
+}
+
+@theme {
+  --font-display: "Instrument Serif", "sans-serif";
+}
+
+.primary-button {
+  @apply font-display relative flex w-full items-center justify-center gap-2 rounded-2xl bg-[var(--primary)] p-2 text-2xl capitalize italic shadow-[0_2px_2px_rgba(0,0,0,0.15)] transition-shadow duration-500 after:absolute after:inset-0 after:z-[-1] after:block after:rounded-2xl after:bg-[var(--primary)] after:ring-[5px] after:ring-[#E5E5E580] after:drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)] hover:shadow-[0_3px_8px_rgba(0,0,0,0.25)];
+}
+
+.secondary-button {
+  @apply rounded-sm bg-[var(--secondary)] p-1 px-2 text-xs text-[var(--secondary-foreground)] shadow-[0_4px_6px_rgba(0,0,0,0.25)];
+}
+
+body {
+  @apply bg-[var(--background)];
+}
