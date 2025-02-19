@@ -4,23 +4,27 @@
   --border: #7e7d7d40;
   --primary: #ebf2fa;
   --background: #edf2f4;
-  --accent: ;
+  --accent: #7e7d7d10;
   --foreground: #212529;
   --accent-foreground: #353535;
   --placeholder: #7e7d7d;
   --secondary: #000814;
   --secondary-foreground: #ffffff;
+  --ring: #e5e5e580;
+  --page: #ffffff;
 
   .dark {
     --border: #202020;
     --primary: #0a0908;
     --background: #0d0106;
-    --accent: ;
+    --accent: #2020207d;
     --foreground: #f8f9fa;
     --accent-foreground: #e9ecef;
     --placeholder: #7e7d7d;
     --secondary: #242423;
     --secondary-foreground: #ffffff;
+    --ring: #202020;
+    --page: #ffffff7a;
   }
 }
 
@@ -41,13 +45,50 @@
 }
 
 .primary-button {
-  @apply font-display relative flex w-full items-center justify-center gap-2 rounded-2xl bg-[var(--primary)] p-2 text-2xl capitalize italic shadow-[0_2px_2px_rgba(0,0,0,0.15)] transition-shadow duration-500 after:absolute after:inset-0 after:z-[-1] after:block after:rounded-2xl after:bg-[var(--primary)] after:ring-[5px] after:ring-[#E5E5E580] after:drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)] hover:shadow-[0_3px_8px_rgba(0,0,0,0.25)];
+  @apply font-display relative flex w-full items-center justify-center gap-2 rounded-2xl bg-[var(--primary)] p-2 text-2xl capitalize italic text-[var(--foreground)] shadow-[0_2px_2px_rgba(0,0,0,0.15)] transition-shadow duration-500 after:absolute after:inset-0 after:z-[-1] after:block after:rounded-2xl after:bg-[var(--primary)] after:ring-[5px] after:ring-[var(--ring)] after:drop-shadow-[0_3px_8px_rgba(0,0,0,0.4)] hover:shadow-[0_3px_8px_rgba(0,0,0,0.25)];
 }
 
 .secondary-button {
   @apply rounded-sm bg-[var(--secondary)] p-1 px-2 text-xs text-[var(--secondary-foreground)] shadow-[0_4px_6px_rgba(0,0,0,0.25)];
 }
 
-body {
-  @apply bg-[var(--background)];
+button {
+  @apply cursor-pointer;
+}
+
+.selectedFile {
+  @apply size-fit rounded-md border border-[var(--border)] bg-[var(--accent)] p-1 flex justify-between gap-2 items-center cursor-default mb-2 scroll-ml-4 snap-start text-nowrap;
+
+  & > button {
+    @apply cursor-pointer hover:bg-red-500/50 rounded;
+  }
+}
+
+div#selectedFiles > ul {
+  mask-image: linear-gradient(to right, transparent, black 20px, black calc(100% - 20px), transparent);
+}
+
+footer > a {
+  @apply focus-visible:underline focus-visible:outline-0 focus-visible:underline-offset-4 ;
+}
+
+::-webkit-scrollbar {
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--accent);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--placeholder);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
+}
+
+::selection {
+  @apply bg-[var(--foreground)]/30 text-[var(--foreground)];
 }

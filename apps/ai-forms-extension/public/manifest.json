@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/chrome-manifest",
+  "manifest_version": 3,
+  "name": "AI Forms extension.",
+  "description": "A Google Gemini-2.0-flash powered extension to autofill your forms based on your files.",
+  "version": "1.0",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "AI Forms extension."
+  },
+  "permissions": ["scripting"]
+}
