@@ -4,9 +4,15 @@
   "name": "AI Forms extension.",
   "description": "A Google Gemini-2.0-flash powered extension to autofill your forms based on your files.",
   "version": "1.0",
-  "action": {
-    "default_popup": "index.html",
-    "default_title": "AI Forms extension."
+  "side_panel": {
+    "default_path": "index.html"
   },
-  "permissions": ["scripting"]
+  "permissions": ["scripting", "sidePanel", "activeTab", "tabs"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["assets/content-script.js"],
+      "run_at": "document_end"
+    }
+  ]
 }

@@ -13,4 +13,8 @@
   "files.associations": {
     "global.css": "tailwindcss"
   },
+  
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }

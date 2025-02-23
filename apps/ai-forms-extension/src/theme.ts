@@ -5,4 +5,5 @@ function theme() {
     document.body.classList.add("dark")
   }
 }
+
 theme()

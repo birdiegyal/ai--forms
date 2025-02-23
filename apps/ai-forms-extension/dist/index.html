@@ -1,16 +1,20 @@
 <!doctype html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <script src="./src/sidepanel.ts" defer type="module"></script> -->
     <title>AI Forms extension</title>
-    <script type="module" crossorigin src="/assets/index-C3gCQjrB.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CtJSxQ8Q.css">
+    <script type="module" crossorigin src="/assets/main.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/main-59d9cphV.css">
   </head>
   <body
-    class="border-(--border) relative flex h-[600px] w-[355px] flex-col items-center overflow-y-clip border bg-[var(--background)] p-8"
+
+    class=" relative flex flex-col items-center bg-[var(--background)] p-8 gap-8 justify-center"
   >
-    <section class="relative flex size-full flex-col gap-8" id="autofill">
+    <section class="relative flex size-full flex-col gap-8 max-w-96" id="autofill">
+
       <form class="flex flex-col gap-4">
         <div class="flex flex-col gap-1">
           <label
@@ -232,7 +236,7 @@
             </div>
 
             <h3
-              class="font-display text-center text-base italic text-[var(--foreground)]"
+              class="font-display text-center text-lg italic text-[var(--foreground)]"
             >
               Drag and drop your files here or select them to upload.
             </h3>
@@ -246,7 +250,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-1 text-[var(--foreground)]">
+        <div class="flex flex-col gap-1 text-[var(--foreground)] ">
           <label
             for="customInstructions"
             class="font-display text-xl capitalize"
@@ -257,7 +261,7 @@
               name="customInstructions"
               id="customInstructions"
               placeholder="e.g. I prefer working remotely but if the employer is sponsoring the H-1B Visa then im ready to relocate so choose the Job location accordingly. I’m expecting a salary ranging somewhere in between $200-300k."
-              class="placeholder-shown::text-var(--accent-foreground) w-full resize-none rounded-md border border-[var(--border)] p-4 text-xs placeholder-shown:text-xs"
+              class="placeholder-shown::text-var(--accent-foreground) w-full resize-none rounded-md border border-[var(--border)] p-4 text-sm placeholder-shown:text-sm"
               rows="8"
             ></textarea>
             <button
@@ -301,7 +305,7 @@
 
     <section
       id="dataPolicy"
-      class="invisible absolute inset-y-full flex size-full -translate-y-full flex-col gap-4 p-8 text-[var(--foreground)]"
+      class="invisible absolute inset-y-full flex size-full -translate-y-full flex-col gap-4 text-[var(--foreground)] p-8 max-w-[448px]"
       style="view-transition-name: dataPolicy"
     >
       <div class="flex w-full items-center justify-between">
@@ -315,6 +319,7 @@
           stroke-linejoin="round"
           id="hidePolicy"
           class="cursor-pointer border border-[var(--border)] stroke-[var(--foreground)] stroke-1"
+          tabindex="0"
         >
           <path d="M18 6 6 18" />
           <path d="m6 6 12 12" />
@@ -347,7 +352,7 @@
     </section>
 
     <footer
-      class="flex w-fit items-center justify-center gap-2 capitalize text-[var(--foreground)]"
+      class="flex w-fit items-center justify-center gap-2 capitalize text-[var(--foreground)] "
     >
       <a href=""><b class="cursor-pointer italic">AI forms.</b></a>
       <div class="h-6 w-[1px] rounded bg-[var(--border)]" id="separator"></div>

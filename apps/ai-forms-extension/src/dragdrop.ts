@@ -1,5 +1,5 @@
 // create a class for this.
-const selectedFiles = new Map<string, File>()
+export const selectedFiles = new Map<string, File>()
 
 // decl this as a method.
 function add(...files: File[]) {
@@ -14,6 +14,7 @@ function remove(filename: string) {
   selectedFiles.delete(filename)
 }
 
+// decl this as a method.
 function has(filename: string): Boolean {
   return selectedFiles.has(filename)
 }
