@@ -1,0 +1,22 @@
+{
+  description = "Supabase edge functions dev env flake.";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs =
+    { self, nixpkgs }:
+    let
+      system = "x86_64-linux";
+      pkgs = import nixpkgs { inherit system; };
+    in
+    {
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
+          # this downloads the latest version of the supabase-cli and deno. there's no version locking done in here.
+          deno
+          supabase-cli
+        ];
+      };
+    };
+}
