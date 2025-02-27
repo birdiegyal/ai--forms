@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
