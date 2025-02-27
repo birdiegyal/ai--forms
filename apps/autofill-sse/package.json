@@ -1,0 +1,10 @@
+{ 
+  "scripts": {
+    "supabase-serve": "supabase functions serve --env-file supabase/.env.local",
+    "supabase-start": "supabase start",
+    "supabase-stop": "supabase stop --project-id autofill-sse"
+  },
+  "devDependencies": {  
+    "supabase": "^2.9.6"
+  }
+}
