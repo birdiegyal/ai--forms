@@ -1,4 +1,8 @@
 { 
+  "name": "autofill-sse",
+  "version": "1.0.0",
+  "description": "This is package contains the supabase edge runtime functions required by this project.",
+  "author": "birdiegyal",
   "scripts": {
     "supabase-serve": "supabase functions serve --env-file supabase/.env.local",
     "supabase-start": "supabase start",

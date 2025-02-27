@@ -1,8 +1,7 @@
 {
   "name": "frontend",
   "description": "frontend for ai-form-filler",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
