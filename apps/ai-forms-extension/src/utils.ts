@@ -1,5 +1,11 @@
 import { selectedFiles } from "./dragdrop"
-import { type Message, EventType, type FormValues } from "./types"
+import {
+  type Message,
+  EventType,
+  type FormValues,
+  AutofillMessage,
+  ScrapeResultMessage
+} from "./types"
 
 export function viewTransition() {
   // document.startViewTransition(() => {
@@ -26,28 +32,56 @@ export async function onsubmit(e: SubmitEvent) {
 
   try {
     const formData = new FormData(e.currentTarget as HTMLFormElement)
-    // getting rid of the file input field from formData.
     formData.delete("uploadFiles")
 
     for (const file of selectedFiles.values()) {
-      // this will cause problem when file input field has same value as selectedFiles.
       formData.append("uploadFiles", file)
     }
 
-    const url = (await getCurrentTab()).url
-
-    if (url) {
-      formData.set("urlToAutofill", url)
-    }
+    const { id } = await getCurrentTab()
 
     button.removeChild(button.querySelector("svg") as SVGElement)
     p.classList.add("animate-pulse")
-    p.innerText = "requesting..."
+    p.innerText = "requesting"
+
+    const synResponse = await new Promise<Message>((resolve, reject) => {
+      chrome.tabs.sendMessage<Message, Message>(
+        id as number,
+        {
+          type: "syn"
+        },
+        (response) => {
+          if (response && response.type === "ack") resolve(response)
+          else reject(new Error("ack not received"))
+        }
+      )
+    })
+
+    const scrapeResponse = await new Promise<ScrapeResultMessage>(
+      (resolve, reject) => {
+        if (synResponse.type === "ack") {
+          chrome.tabs.sendMessage<Message, ScrapeResultMessage>(
+            id as number,
+            {
+              type: "scrape"
+            },
+            (response) => {
+              if (response.type === "scrapingResult") resolve(response)
+              else reject(new Error("scrapingResult not received"))
+            }
+          )
+        }
+      }
+    )
+
+    if (scrapeResponse.type === "scrapingResult")
+      formData.set("HTML", scrapeResponse.scrapedHtml)
 
     const fetchRes = await fetch(import.meta.env.VITE_SUPABASE_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_JWT}`
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_JWT}
+        `
       },
       body: formData
     })
@@ -62,7 +96,6 @@ export async function onsubmit(e: SubmitEvent) {
     if (readableStream) {
       const streamReader = readableStream.getReader()
       while (true) {
-        // this is going to be very problematic when a very large chunk is coming down the pipe. its going to break it up.
         const { done, value } = await streamReader.read()
         if (done) {
           break
@@ -81,42 +114,20 @@ export async function onsubmit(e: SubmitEvent) {
             const data = dataString.split("data:")[1].trim()
             let { formValues } = JSON.parse(data) as { formValues: string }
             const parsedFormValues: FormValues = JSON.parse(formValues)
+            console.log(parsedFormValues)
 
-            // send a syn msg to the content script.
-            let tabid = (await getCurrentTab()).id as number
-
-            const synResponse = await new Promise<Message>(
-              (resolve, reject) => {
-                chrome.tabs.sendMessage<Message, Message>(
-                  tabid,
-                  {
-                    type: "syn"
-                  },
-                  (response) => {
-                    if (response && response.type === "ack") {
-                      resolve(response)
-                    } else {
-                      reject(new Error("ack not received"))
-                    }
-                  }
-                )
+            chrome.tabs.sendMessage<AutofillMessage, Message>(
+              id as number,
+              { type: "autofill", formValues: parsedFormValues },
+              (response) => {
+                if (response && response.type === "done")
+                  p.textContent = "autofill completed"
               }
             )
+            break
 
-            // if ack received, send the formValues.
-            if (synResponse.type === "ack") {
-              chrome.tabs.sendMessage<Message, Message>(
-                tabid,
-                { type: "autofill", formValues: parsedFormValues },
-                (response) => {
-                  console.log(response)
-                  // if done received, update the button text.
-                  if (response && response.type === "done")
-                    p.textContent = "autofill completed"
-                }
-              )
-            }
-
+          case EventType.autofillFailed:
+            p.innerText = "Autofill failed"
             break
 
           default:

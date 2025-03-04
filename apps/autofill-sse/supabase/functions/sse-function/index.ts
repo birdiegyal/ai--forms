@@ -1,13 +1,11 @@
-// Setup type definitions for built-in Supabase Runtime APIs
 import "jsr:@supabase/functions-js/edge-runtime.d.ts"
 import generateFormValues from "./genai.ts"
-import getAllInputFields from "./scrapper.ts"
 import { corsHeaders } from "../_shared/cors.ts"
 
 // type IFormdata = {
-//   urlToAutofill: string
+//   HTML: string
 //   uploadFiles: File[]
-//   customInstructions: string
+//   additionalContext: string
 // }
 
 Deno.serve(async (req: Request) => {
@@ -20,66 +18,46 @@ Deno.serve(async (req: Request) => {
   // this should adhere to IFormdata.
   const formData = await req.formData()
 
-  // this is going to be [] if no files are uploaded. we need to make sure that user gets the feedback that he hasn't selected a file and uploaded yet and is trying to autofill which is impossible to do.
   const files = formData.getAll("uploadFiles") as File[]
-  const customInstructions = formData.get("customInstructions") as string
-  const urlToAutofill = formData.get("urlToAutofill") as string
+  const additionalContext = formData.get("additionalContext") as string
+  const HTML = formData.get("HTML") as string
 
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        // notify user about autofilling has started.
-        controller.enqueue(
-          textEncoder.encode(
-            `event: autofillStarted\ndata: ""\n`,
-          ),
-        )
-
-        const htmlContent = await getAllInputFields(urlToAutofill)
-
         // notify user about scraping completed or failed.
         controller.enqueue(
-          textEncoder.encode(
-            `event: formUnderstood\ndata: ""\n`,
-          ),
+          textEncoder.encode(`event: formUnderstood\ndata: ""\n`)
         )
 
-        const prompt =
-          `fill this form using html content required to understand the form.
-        HTML CONTENT: ${htmlContent}
-        ${
-            customInstructions !== "" &&
-            `CUSTOM INSTRUCTIONS: ${customInstructions}`
-          }
-        `
+        const prompt = `fill this form for me. HTML: ${HTML} ${additionalContext !== "" && `ADDITIONAL CONTEXT: ${additionalContext}`}`
+
         const formValues = await generateFormValues({
           prompt,
-          files,
-          htmlContent,
+          files
         })
 
         // notify user about autofill completed or failed.
         controller.enqueue(
           textEncoder.encode(
-            `event: autofillCompleted\ndata: ${JSON.stringify({ formValues })}\n`,
-          ),
+            `event: autofillCompleted\ndata: ${JSON.stringify({ formValues })}\n`
+          )
         )
-        
       } catch (error) {
         console.error(error)
+        textEncoder.encode(
+          `event: autofillFailed\ndata:""\n`
+        )
       } finally {
         controller.close()
       }
-    },
+    }
   })
 
-  return new Response(
-    stream,
-    {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Access-Control-Allow-Origin": "*",
-      },
-    },
-  )
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/event-stream",
+      "Access-Control-Allow-Origin": "*"
+    }
+  })
 })
