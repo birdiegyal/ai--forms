@@ -1,5 +1,6 @@
 {
-  "$schema": "https://json.schemastore.org/package.json","name": "fill-form",
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "fill-form",
   "version": "1.0.0",
   "description": "appwrite function responsible for filling user forms.",
   "main": "src/main.ts",

@@ -1,5 +1,6 @@
 {
   "name": "ai-forms",
+  "description": "a web app to generate forms using AI that are so convenient to autofill by users.",
   "version": "0.1.0",
   "private": true,
   "scripts": {

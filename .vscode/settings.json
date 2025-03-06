@@ -10,7 +10,7 @@
   },
   // specifying to recognize css files as tailwindcss files.
   "files.associations": {
-    "global.css": "tailwindcss"
+    "globals.css": "tailwindcss",
   },
   "deno.enable": true,
   "deno.enablePaths": ["./apps/autofill-sse/supabase/functions"],
