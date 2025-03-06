@@ -13,7 +13,6 @@
     {
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
-          # this downloads the latest version of the supabase-cli and deno. there's no version locking done in here.
           deno
           supabase-cli
         ];
