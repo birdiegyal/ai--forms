@@ -11,13 +11,13 @@ const schema = {
     properties: {
       querySelector: {
         type: SchemaType.STRING,
-        description: "The query selector of the form field",
+        description: "a unique query selector for the form field that's used in client side to fill form using document.querySelector(<querySelector>).value = <value>. so querySelector must be unique.",
         nullable: false
       },
       action: {
         type: SchemaType.OBJECT,
         description:
-          "The action to be performed in order to set the form field",
+          "The action to be performed in order to set the form field. it could be either a click or fill. ",
         properties: {
           type: {
             type: SchemaType.STRING,
@@ -51,15 +51,18 @@ export default async function generateFormValues({
     model: "models/gemini-2.0-flash",
     systemInstruction: `GOAL: extract required information to fill the form using user uploaded pdfs and images. 
     
-    RESPONSE: structured response schema provided.
+    RESPONSE: structured response schema provided. action type could only be click or fill.
     
-    WARNINGS: 
-    1. don't try to set the field of following type: input elements of type file 
-    2. when trying to answer checkboxes always return queryselector of the label describing it. 
-    3. always use single quotes within queryselectors. e.g. "input[type='name']", "label[for='abaf1ba5-6c68-410d-b083-72ebd3301d0e_question_16851360002[]-labeled-checkbox-0']"
-    4. infer gender, race, veteran status based on user information provided.
+    INSTRUCTIONS: 
+    > don't try to set the field of following type: input elements of type file 
+    > when trying to answer checkboxes always return queryselector of the label describing it. 
+    > always use single quotes within queryselectors. e.g. "input[type='name']", "label[for='abaf1ba5-6c68-410d-b083-72ebd3301d0e_question_16851360002[]-labeled-checkbox-0']"
+    > infer gender, race, veteran status based on user information provided.
+    > format values according to the type of input fields. e.g. if input#number[type='number'] then omit the country code.
+    > response should be accurate and relevant to the form fields. for e.g. return email only if its found in the user files, ignore otherwise. similarly, return github link only if found, return linkedin only if found.
+    > querySelector for the form fileds must be unique.i repeat it should be unique. cross check it with your response. "
     
-    CONTEXT: you are recieving HTML required to understand what is asked in the form and user files in pdf and images format to answer the questions asked in the form. you may receive the writing style to adopt by the user and some additional user infomation in the prompt that is to be included while answering the form questions. 
+    CONTEXT: you are going to recieving HTML required to understand what is asked in the form and user files in pdf and images format to answer the questions asked in the form. you may receive the writing style to adopt by the user and some additional user infomation in the prompt that is to be included while answering the form questions. 
     
     for e.g. i've total 3 years of working experience for Jio Cinema with CTC of 45 LPA. I expect CTC of 65LPA for the current Job role and Banglore is my preffered Job location. 
     
@@ -68,7 +71,7 @@ export default async function generateFormValues({
     generationConfig: {
       responseSchema: schema,
       responseMimeType: "application/json",
-      temperature: 0.2
+      temperature: 0.3
     }
   })
 

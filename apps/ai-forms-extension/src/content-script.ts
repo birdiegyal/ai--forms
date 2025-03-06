@@ -37,30 +37,48 @@ chrome.runtime.onMessage.addListener(
   }
 )
 
-// autofill varies based on the FormValues received.
 function autofill(formValues: FormValues) {
   if (formValues.length > 0) {
-    for (const { querySelector, action } of formValues) {
-      const element = document.querySelector(querySelector) as
-        | HTMLInputElement
-        | HTMLButtonElement
-        | HTMLTextAreaElement
-        | HTMLSelectElement
-        | HTMLLabelElement
-      if (element) {
-        switch (action.type) {
-          case "fill":
-            // (element as HTMLInputElement | HTMLTextAreaElement).value = action.value
-            element.setAttribute("value", action.value)
-            break
-          case "click":
-            element.click()
-            break
-          default:
-            console.log("unknown action")
+    const visited: Element[] = []
+    const clickables = formValues.filter(
+      (formValue) => formValue.action.type === "click"
+    )
+
+    for (const { querySelector } of clickables) {
+      const elements = document.querySelectorAll(querySelector) as NodeListOf<HTMLButtonElement | HTMLLabelElement>
+
+      for (const element of elements) {
+        if (!visited.includes(element)) {
+          visited.push(element)
+          element.click()
+          element.blur()
         }
       }
     }
+
+    // this should make action.type = FillAction. weak type system ig.
+    const fillables = formValues.filter(
+      (formValue) => formValue.action.type === "fill"
+    )
+
+    // this is a weird workaround especially for ashbyhq.
+    setTimeout(() => {
+      for (const { querySelector, action } of fillables) {
+        const element = document.querySelector(querySelector) as
+          | HTMLInputElement
+          | HTMLTextAreaElement
+          | HTMLSelectElement
+          | HTMLLabelElement
+
+        if (element && action.type === "fill") {
+          element.focus()
+          ;(element as HTMLTextAreaElement | HTMLInputElement).value =
+            action.value
+          element.blur()
+        }
+      }
+    }, 1000)
+
   } else {
     console.log("no form values to autofill")
   }
@@ -84,3 +102,8 @@ function scrape(): string {
   // just take away their <body/> if they are such a mess to scrape.
   return document.querySelector("body")?.outerHTML as string
 }
+
+
+/* 
+we got a new problem here. after filling the form, the form is not submitted. very PROBLEMATIC.
+*/
