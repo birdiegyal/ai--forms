@@ -1,10 +1,23 @@
 import FormPreview from "@/components/form-preview"
-import { type Message } from "@/app/session/[session_id]/page"
+import { type chatMessage } from "@/app/session/[session_id]/page"
 import { Loader } from "@/components/ui/loader"
 
 type ChatProps = {
-  messages: Message[]
+  messages: chatMessage[]
   isLoading: boolean
+}
+
+const msg: chatMessage = {
+  object: [
+    {
+      name: "xyz",
+      placeholder: "xyz",
+      type: "text"
+    }
+  ],
+  role: "assistant",
+  id: "1",
+  content: ""
 }
 
 export default function Chat({ messages, isLoading }: ChatProps) {
@@ -19,14 +32,15 @@ export default function Chat({ messages, isLoading }: ChatProps) {
               </div>
             )
           case "assistant":
-            return (
-              <FormPreview
-                className="self-center"
-                key={message.id}
-                // @ts-ignore
-                formFields={message.object}
-              />
-            )
+            if ("object" in message) {
+              return (
+                <FormPreview
+                  className="self-center"
+                  key={message.id}
+                  formFields={message.object}
+                />
+              )
+            }
         }
       })}
       {isLoading && (

@@ -5,18 +5,18 @@ import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input"
 import Chat from "@/components/chats"
 import {
   experimental_useObject as useObject,
-  type Message as _Message
+  type Message
 } from "@ai-sdk/react"
 import { formField } from "@/app/api/chat/schema"
 import { z } from "zod"
 import { useSearchParams, usePathname } from "next/navigation"
 import { useEffect, useReducer } from "react"
 
-export type Message =
-  | (_Message & {
+export type chatMessage =
+  | (Message & {
       object: z.infer<typeof formField>[]
     })
-  | _Message
+  | Message
 
 type UserAction = {
   role: "user"
@@ -34,7 +34,10 @@ export type ActionType = {
 } & (UserAction | AssistantAction)
 
 type RoleHandlersType = Partial<{
-  [k in Message["role"]]: (state: Message[], action: ActionType) => Message[]
+  [k in chatMessage["role"]]: (
+    state: chatMessage[],
+    action: ActionType
+  ) => chatMessage[]
 }>
 
 // type TypeHandlersType = {
@@ -94,7 +97,7 @@ const roleHandlers: RoleHandlersType = {
 //   }
 // }
 
-function messageDispatcher(state: Message[], action: ActionType) {
+function messageDispatcher(state: chatMessage[], action: ActionType) {
   // const typeHandler = typeHandlers[action.type]
   const roleHandler = roleHandlers[action.role]!
   return roleHandler ? roleHandler(state, action) : state
@@ -134,13 +137,15 @@ export default function () {
         ]
       : []
   )
+
+  // one request is made in here.
   useEffect(() => {
     console.count("# of times this effect runs")
     if (prompt) {
       handleSubmit(prompt)
       window.history.replaceState({}, "", currentPath)
     }
-  }, [prompt])
+  }, [])
 
   return (
     <>

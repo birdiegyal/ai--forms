@@ -8,8 +8,8 @@ export default function Header() {
   const currentPath = usePathname()
 
   return (
-    <nav className="flex justify-between bg-background z-20 fixed inset-x-0 top-0 p-4">
-      <div className="flex items-center justify-center gap-2 bgred">
+    <nav className="bg-background fixed inset-x-0 top-0 z-20 flex justify-between p-4">
+      <div className="relative flex items-center justify-center gap-2">
         <svg
           width="36"
           height="36"
@@ -98,8 +98,10 @@ export default function Header() {
             </clipPath>
           </defs>
         </svg>
-
         <b>AI Forms</b>
+        <span className="rounded-3xl border-2 border-orange-500 bg-orange-500/50 px-2 text-xs italic">
+          beta
+        </span>
       </div>
 
       <div className="space-x-2">
