@@ -23,6 +23,7 @@ export default function Chat({ messages, isLoading }: ChatProps) {
               <FormPreview
                 className="self-center"
                 key={message.id}
+                // @ts-ignore
                 formFields={message.object}
               />
             )
