@@ -138,5 +138,23 @@
 }
 
 ::selection {
-  @apply bg-orange-400/90;
+  @apply bg-orange-400/90 text-white;
+}
+
+@keyframes shimmer-text {
+0% {
+  background-position: 150% center;
+}
+100% {
+  background-position: -150% center;
+}
+}
+
+@keyframes shimmer {
+0% {
+  background-position: 200% 50%;
+}
+100% {
+  background-position: -200% 50%;
+}
 }

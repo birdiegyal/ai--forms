@@ -1,51 +1,170 @@
 "use client"
 
-import FormPreview from "@/components/form-preview"
+import { generateUUID } from "@/lib/utils"
+import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input"
+import Chat from "@/components/chats"
 import {
-  PromptInput,
-  PromptInputTextarea,
-} from "@/components/ui/prompt-input"
-import { experimental_useObject as useObject } from "@ai-sdk/react"
+  experimental_useObject as useObject,
+  type Message as _Message
+} from "@ai-sdk/react"
 import { formField } from "@/app/api/chat/schema"
-import { array } from "zod"
+import { z } from "zod"
+import { useSearchParams, usePathname } from "next/navigation"
+import { useEffect, useReducer } from "react"
+
+export type Message =
+  | (_Message & {
+      object: z.infer<typeof formField>[]
+    })
+  | _Message
+
+type UserAction = {
+  role: "user"
+  content: string
+}
+
+type AssistantAction = {
+  role: "assistant"
+  object: z.infer<typeof formField>[]
+}
+
+export type ActionType = {
+  type: "add" | "delete"
+  id?: string
+} & (UserAction | AssistantAction)
+
+type RoleHandlersType = Partial<{
+  [k in Message["role"]]: (state: Message[], action: ActionType) => Message[]
+}>
+
+// type TypeHandlersType = {
+//   [k in ActionType["type"]]: (
+//     state: Message[],
+//     action: ActionType,
+//     roleHandler: (state: Message[], action: ActionType) => Message[]
+//   ) => Message[]
+// }
+
+const roleHandlers: RoleHandlersType = {
+  user: (state, action) => {
+    if (action.role !== "user") {
+      return state
+    }
+    switch (action.type) {
+      case "add":
+        return [
+          ...state,
+          {
+            id: action.id || generateUUID(),
+            role: "user",
+            content: action.content
+          }
+        ]
+      case "delete":
+        return state.filter((msg) => msg.id !== action.id)
+    }
+  },
+  assistant: (state, action) => {
+    if (action.role !== "assistant") {
+      return state
+    }
+    switch (action.type) {
+      case "add":
+        return [
+          ...state,
+          {
+            id: action.id || generateUUID(),
+            role: "assistant",
+            object: action.object,
+            content: ""
+          }
+        ]
+      case "delete":
+        return state.filter((msg) => msg.id !== action.id)
+    }
+  }
+}
+
+// const typeHandlers: TypeHandlersType = {
+//   add(state, action, roleHandler) {
+//     return roleHandler(state, action)
+//   },
+//   delete(state, action, roleHandler) {
+//     return roleHandler(state, action)
+//   }
+// }
+
+function messageDispatcher(state: Message[], action: ActionType) {
+  // const typeHandler = typeHandlers[action.type]
+  const roleHandler = roleHandlers[action.role]!
+  return roleHandler ? roleHandler(state, action) : state
+}
 
 export default function () {
   const {
     submit: handleSubmit,
-    object: formFields,
     stop,
     isLoading
   } = useObject({
     api: "/api/chat",
-    schema: array(formField)
+    schema: z.array(formField),
+    onFinish({ object }) {
+      if (object) {
+        dispatch({
+          type: "add",
+          role: "assistant",
+          object: object
+        })
+      }
+    }
   })
 
-  if (formFields) {
-    console.log(formFields)
-  }
+  const searchParams = useSearchParams()
+  const currentPath = usePathname()
+  const prompt = searchParams.get("prompt")
+  const [messages, dispatch] = useReducer(
+    messageDispatcher,
+    prompt
+      ? [
+          {
+            role: "user",
+            content: prompt,
+            id: generateUUID()
+          }
+        ]
+      : []
+  )
+  useEffect(() => {
+    console.count("# of times this effect runs")
+    if (prompt) {
+      handleSubmit(prompt)
+      window.history.replaceState({}, "", currentPath)
+    }
+  }, [prompt])
 
   return (
-    <div className="flex h-full w-full grow items-center justify-center">
-      <div className="relative flex h-full w-full flex-col justify-start gap-2.5 px-10">
-        {/* <FormPreview></FormPreview> */}
-        <PromptInput
-          className="bg-input/20 absolute inset-x-0 bottom-0 z-40 mx-auto w-full max-w-3xl rounded-2xl border-none p-2 backdrop-blur-2xl"
-          onSubmit={handleSubmit}
-        >
-          <PromptInputTextarea
-            placeholder="Describe your Form for hiring a Design Engineer..."
-            className="dark:bg-input/0 overflow-y-auto p-2"
-            isLoading={isLoading}
-            stop={stop}
-          />
-        </PromptInput>
+    <>
+      <div className="flex w-full grow items-center justify-center pb-[300px] pt-16">
+        <div className="px-15 flex w-full flex-col justify-start gap-2.5 lg:max-w-[85%]">
+          <Chat messages={messages} isLoading={isLoading}></Chat>
+        </div>
       </div>
-    </div>
+      <PromptInput
+        className="bg-input/20 fixed inset-x-0 bottom-4 z-40 mx-auto w-full max-w-3xl rounded-2xl border-none backdrop-blur-2xl"
+        onSubmit={handleSubmit}
+      >
+        <PromptInputTextarea
+          placeholder="Describe your Form for hiring a Design Engineer..."
+          className="dark:bg-input/0 overflow-y-auto p-2"
+          isLoading={isLoading}
+          stop={stop}
+          dispatch={dispatch}
+        />
+      </PromptInput>
+    </>
   )
 }
 
 /* 
 TODO
-  - we need a way to send the prompt to the /api/chat.
-  - 
 */

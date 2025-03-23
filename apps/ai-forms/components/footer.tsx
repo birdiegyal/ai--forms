@@ -8,7 +8,7 @@ export default function Footer() {
   if (currentPath !== "/") return <></>
   
   return (
-    <footer className="invisible flex flex-col items-start justify-center gap-2.5 text-sm lg:visible">
+    <footer className="invisible flex flex-col items-start justify-center gap-2.5 text-sm lg:visible fixed bottom-4 inset-x-4">
       <p className="font-medium capitalize">keyboard shortcuts</p>
       <div className="flex items-start justify-center gap-5 selection:text-white">
         <div className="flex items-center justify-center">

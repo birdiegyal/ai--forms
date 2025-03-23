@@ -16,16 +16,13 @@ export async function POST(req: Request) {
     > use directed speech
 
     e.g.
-    <user>: create a form asking the job applicant his fullname, phone number, email, and proof of excellence in any field. ask him about his expectations from our company.
+    <user>: create a form asking the job applicant his fullname, phone number, email, and proof of excellence in any field. ask him about his salary expectations to work at our company.
     
-    <assisant>: [{"type": "text", "placeholder": "fullname"},   {"type": "email", "placeholder": "email"}, {"type": "tel", "placeholder": "phone number"}, {"type": "text", "placeholder": "proof of excellence"}, {"type": "text", "placeholder": "your  expectations from our company"}]`,
+    <assisant>: [{"type": "text", "placeholder": "your fullname", "name": "fullname"},   {"type": "email", "placeholder": "your email", "name": "email"}, {"type": "tel", "placeholder": "your phone number", "name": "phone number"}, {"type": "text", "placeholder": "proof of excellence", "name": "proof of excellence"}, {"type": "number", "placeholder": "your salary expectations to work at our company", "name": "salary expectations"}]`,
     prompt,
     model: google("gemini-2.0-flash-lite-preview-02-05"),
-    schema: formField
-    // headers: {
-    //   'Connection': 'keep-alive',
-    //   'Keep-Alive': 'timeout=30'
-    // },
+    schema: formField,
+    output: "array"
   })
 
   return result.toTextStreamResponse()

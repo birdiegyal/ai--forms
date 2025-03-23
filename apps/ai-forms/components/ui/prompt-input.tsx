@@ -17,6 +17,8 @@ import React, {
 } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowUp, CircleStop } from "lucide-react"
+import Link from "next/link"
+import { ActionType } from "@/app/session/[session_id]/page"
 
 type PromptInputContextType = {
   isLoading: boolean
@@ -100,6 +102,8 @@ export type PromptInputTextareaProps = {
   disableAutosize?: boolean
   stop: () => void
   isLoading: boolean
+  navigateTo?: string
+  dispatch?: (action: ActionType) => void
 } & React.ComponentProps<typeof Textarea>
 
 function PromptInputTextarea({
@@ -108,6 +112,8 @@ function PromptInputTextarea({
   disableAutosize = false,
   stop,
   isLoading: isGeneratingObject,
+  navigateTo,
+  dispatch,
   ...props
 }: PromptInputTextareaProps) {
   const { value, setValue, maxHeight, onSubmit, disabled, isLoading } =
@@ -128,7 +134,21 @@ function PromptInputTextarea({
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      onSubmit?.(value)
+      // dispatch a "add" action with "user" role
+      if (dispatch !== undefined) {
+        dispatch({
+          role: "user",
+          content: value,
+          type: "add"
+        })
+      } else {
+        console.error("dispatch is undefined")
+      }
+      try {
+        onSubmit?.(value)
+      } finally {
+        setValue("")
+      }
     }
     onKeyDown?.(e)
   }
@@ -141,42 +161,50 @@ function PromptInputTextarea({
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         className={cn(
-          "text-primary min-h-[44px] w-full resize-none border-none bg-transparent shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0 caret-orange-400",
+          "text-primary min-h-[44px] w-full resize-none border-none bg-transparent caret-orange-400 shadow-none outline-none focus-visible:ring-0 focus-visible:ring-offset-0",
           className
         )}
         rows={1}
         {...props}
       />
       <PromptInputActions className="justify-end pt-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-background cursor-pointer rounded-full border-2 [&_svg_rect]:fill-red-400 [&_svg_rect]:stroke-red-400"
-          disabled={disabled}
-          data-state={(!isLoading ? "submit" : "stop") as ButtonState}
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            // this is a toggle button. first click is for submit and next click is for stop.
-            const buttonState = e.currentTarget.dataset.state as ButtonState
-            switch (buttonState) {
-              case "submit":
-                onSubmit?.(value)
-                e.currentTarget.setAttribute("data-state", "stop")
-                break
-              case "stop":
-                stop()
-                e.currentTarget.setAttribute("data-state", "submit")
-                break
-            }
-          }}
-        >
-          {!isGeneratingObject ? (
+        {!navigateTo ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="bg-background cursor-pointer rounded-full border-2 [&_svg_rect]:fill-red-400 [&_svg_rect]:stroke-red-400"
+            disabled={disabled}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              if (dispatch) {
+                dispatch({
+                  role: "user",
+                  content: value,
+                  type: "add"
+                })
+              }
+              try {
+                !isGeneratingObject ? onSubmit?.(value) : stop()
+              } finally {
+                setValue("")
+              }
+            }}
+          >
+            {!isGeneratingObject ? (
+              <ArrowUp className="size-6" />
+            ) : (
+              <CircleStop className="size-6" />
+            )}
+          </Button>
+        ) : (
+          <Link
+            href={`${navigateTo}?prompt=${value}`}
+            className="bg-background hover:bg-accent/50 cursor-pointer rounded-full border-2 p-1 transition-colors [&_svg_rect]:fill-red-400 [&_svg_rect]:stroke-red-400"
+          >
             <ArrowUp className="size-6" />
-          ) : (
-            <CircleStop className="size-6" />
-          )}
-        </Button>
+          </Link>
+        )}
       </PromptInputActions>
     </>
   )

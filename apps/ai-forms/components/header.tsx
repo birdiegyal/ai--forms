@@ -1,9 +1,15 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
-import { Cog } from "lucide-react"
+import { Cog, Plus, Archive } from "lucide-react"
+import { usePathname } from "next/navigation"
+
 export default function Header() {
+  const currentPath = usePathname()
+
   return (
-    <nav className="flex justify-between ">
-      <div className="flex items-center justify-center gap-2">
+    <nav className="flex justify-between bg-background z-20 fixed inset-x-0 top-0 p-4">
+      <div className="flex items-center justify-center gap-2 bgred">
         <svg
           width="36"
           height="36"
@@ -96,9 +102,31 @@ export default function Header() {
         <b>AI Forms</b>
       </div>
 
-      <Button variant={"ghost"} className="cursor-pointer rounded-full border-2" size={"icon"}>
-        <Cog className="stroke-1 size-6"/>
-      </Button>
+      <div className="space-x-2">
+        {currentPath !== "/" && (
+          <Button
+            variant={"ghost"}
+            className="cursor-pointer rounded-full border-2"
+            size={"icon"}
+          >
+            <Plus className="size-6 p-1" />
+          </Button>
+        )}
+        <Button
+          variant={"ghost"}
+          className="cursor-pointer rounded-full border-2"
+          size={"icon"}
+        >
+          <Archive className="size-6 p-1" />
+        </Button>
+        <Button
+          variant={"ghost"}
+          className="cursor-pointer rounded-full border-2"
+          size={"icon"}
+        >
+          <Cog className="size-6 p-1" />
+        </Button>
+      </div>
     </nav>
   )
 }
