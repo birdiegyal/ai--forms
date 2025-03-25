@@ -45,7 +45,7 @@ app.use("/", function (req: Request, res: Response, next: NextFunction) {
   proxyMiddleware(req, res, next)
 })
 
-const PORT = 3000
+const PORT = 3005
 app.listen(PORT, () => {
   console.log(`Proxy server running on http://localhost:${PORT}`)
 })

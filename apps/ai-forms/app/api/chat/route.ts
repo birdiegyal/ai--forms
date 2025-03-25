@@ -14,6 +14,8 @@ export async function POST(req: Request) {
     warnings:
     > strings should be in lowercase.
     > use directed speech
+    > use appropriate field types for the formFields. e.g. if the answer could be simple yes or no, use a checkbox. if it could be answered using a number, then use a number.
+    > return intuitive field names and use spaces instead of underscores for separation.
 
     e.g.
     <user>: create a form asking the job applicant his fullname, phone number, email, and proof of excellence in any field. ask him about his salary expectations to work at our company.

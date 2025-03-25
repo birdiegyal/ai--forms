@@ -5,7 +5,7 @@ import {
   createRootRoute,
   useLocation,
 } from "@tanstack/react-router"
-import "@/global.css"
+import "@/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { SessionProvider } from "@/components/session-provider"
 import ToggleTheme from "@/components/custom/toggleTheme"

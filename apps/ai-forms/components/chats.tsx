@@ -7,19 +7,6 @@ type ChatProps = {
   isLoading: boolean
 }
 
-const msg: chatMessage = {
-  object: [
-    {
-      name: "xyz",
-      placeholder: "xyz",
-      type: "text"
-    }
-  ],
-  role: "assistant",
-  id: "1",
-  content: ""
-}
-
 export default function Chat({ messages, isLoading }: ChatProps) {
   return (
     <div className="flex w-full flex-col items-center gap-6">
@@ -45,7 +32,7 @@ export default function Chat({ messages, isLoading }: ChatProps) {
       })}
       {isLoading && (
         <Loader
-          variant="text-blink"
+          variant="text-shimmer"
           size="sm"
           text="generating form..."
           className="self-start capitalize"

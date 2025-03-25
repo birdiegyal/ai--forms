@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { type ControllerRenderProps, useForm } from "react-hook-form"
 import { getZodSchemaFromStructuredOutput, getZeroValues } from "@/lib/utils"
 import { z } from "zod"
+import { toast } from "sonner"
 
 interface FormPreviewProps extends React.HTMLAttributes<HTMLDivElement> {
   formFields: z.infer<typeof formField>[]
@@ -35,6 +36,17 @@ export default function FormPreview({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
+    toast("Form submitted", {
+      style: {
+        width: "fit-content",
+        color: "var(--color-green-400)"
+      },
+      description: (
+        <pre className="size-fit p-1 bg-background rounded-xl overflow-auto text-xs">
+          <code>{JSON.stringify(values, null, 1)}</code>
+        </pre>
+      )
+    })
   }
 
   return (

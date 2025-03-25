@@ -140,11 +140,13 @@ export default function () {
 
   // one request is made in here.
   useEffect(() => {
-    console.count("# of times this effect runs")
     if (prompt) {
+      console.count("# of times this effect runs")
       handleSubmit(prompt)
       window.history.replaceState({}, "", currentPath)
     }
+
+    return stop
   }, [])
 
   return (

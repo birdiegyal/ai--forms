@@ -26,7 +26,7 @@ export default function () {
         </p>
         <PromptInput className="bg-input/20 w-full rounded-2xl border-none p-2">
           <PromptInputTextarea
-            placeholder="Describe your Form for hiring a Design Engineer..."
+            placeholder="Describe your Form to hire, for user feedback, a poll with friends..."
             className="dark:bg-input/0 overflow-y-auto p-2"
             isLoading={isLoading}
             stop={stop}

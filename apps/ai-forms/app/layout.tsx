@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner"
 import { ThemeProvider } from "@/components/theme-provider"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
@@ -30,7 +31,7 @@ export default function RootLayout({
       <body
         className={
           `${geistSans.variable} ${geistMono.variable} antialiased` +
-          "m-0 flex flex-col gap-4 relative"
+          "relative m-0 flex flex-col gap-4"
         }
       >
         <ThemeProvider
@@ -39,9 +40,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header/>
+          <Header />
           {children}
-          <Footer/>
+          <Footer />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
