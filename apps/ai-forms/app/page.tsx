@@ -5,7 +5,7 @@ import { experimental_useObject as useObject } from "@ai-sdk/react"
 import { formField } from "@/app/api/chat/schema"
 import { array } from "zod"
 
-export default function () {
+export default function Home() {
   const { stop, isLoading } = useObject({
     api: "/api/chat",
     schema: array(formField)

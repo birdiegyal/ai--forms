@@ -64,7 +64,6 @@ export default function FormPreview({
           </Button>
         </div>
       </div>
-      {/* we got to render the form in here. */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
