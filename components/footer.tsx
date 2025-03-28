@@ -10,7 +10,7 @@ export default function Footer() {
     <footer
       className={clsx([
         "invisible fixed inset-x-4 bottom-4 flex flex-col items-start justify-center gap-2.5 text-sm",
-        currentPath !== "/" && "lg:visible"
+        currentPath === "/" && "lg:visible"
       ])}
     >
       <p className="font-medium capitalize">keyboard shortcuts</p>

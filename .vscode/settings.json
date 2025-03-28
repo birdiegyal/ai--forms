@@ -12,9 +12,4 @@
   "files.associations": {
     "globals.css": "tailwindcss",
   },
-  "deno.enable": true,
-  "deno.enablePaths": ["./apps/autofill-sse/supabase/functions"],
-  "deno.lint": true,
-  "deno.path": "/nix/store/jh4ivfl9agj29dnj6ww9ax5cbxnql9j2-deno-2.1.7/bin/deno",
-  "task.autoDetect": "on"
 }
