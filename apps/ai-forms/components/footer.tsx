@@ -1,14 +1,18 @@
 "use client"
 
 import { usePathname } from "next/navigation"
+import clsx from "clsx"
 
 export default function Footer() {
   const currentPath = usePathname()
 
-  if (currentPath !== "/") return <></>
-  
   return (
-    <footer className="invisible flex flex-col items-start justify-center gap-2.5 text-sm lg:visible fixed bottom-4 inset-x-4">
+    <footer
+      className={clsx([
+        "invisible fixed inset-x-4 bottom-4 flex flex-col items-start justify-center gap-2.5 text-sm",
+        currentPath !== "/" && "lg:visible"
+      ])}
+    >
       <p className="font-medium capitalize">keyboard shortcuts</p>
       <div className="flex items-start justify-center gap-5 selection:text-white">
         <div className="flex items-center justify-center">

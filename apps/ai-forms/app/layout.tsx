@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AI Forms",
-  description: "Create forms using AI"
+  description: "Generate AI native forms in no time."
 }
 
 export default function RootLayout({
