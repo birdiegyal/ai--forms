@@ -1,5 +1,5 @@
 {
-  //we don't need deno setting because we aren't using supabase functions for now
+  // we don't need deno setting because we aren't using supabase functions for now
   /*   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
   },
