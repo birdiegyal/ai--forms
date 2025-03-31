@@ -2,6 +2,7 @@ import FormPreview from "@/components/form-preview"
 import { getFormFields } from "@/app/actions"
 import { createServerClient } from "@supabase/ssr"
 import { type formSchemaType } from "@/lib/types"
+
 export const dynamicParams = true
 
 export async function generateStaticParams() {

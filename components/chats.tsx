@@ -13,6 +13,8 @@ export default function Chat({
   isLoading,
   className: _className,
 }: ChatProps) {
+
+  
   return (
     <div className="flex w-full flex-col items-center gap-6">
       {messages.map((message) => {
@@ -37,25 +39,27 @@ export default function Chat({
                       >
                         <Expand className="size-6 p-1" />
                       </Button>
+                      {/* we need a way to feedback to the user. */}
                       <Button
                         variant="ghost"
                         className="cursor-pointer rounded-md text-sm "
                         onClick={async (e) => {
                           e.preventDefault()
-                          const res = await publishForm(message.object)
-                          console.log(res)
-                          if (res) {
-                            const publishedFormUrl = `/forms/${res.formId}`
-                            toast("Form published successfully", {
-                              action: {
-                                label: "view",
-                                onClick: () => {
-                                  redirect(publishedFormUrl)
+                          try {
+                            const res = await publishForm(message.object)
+                            if (res) {
+                              const publishedFormUrl = `/forms/${res.formId}`
+                              toast("Form published successfully", {
+                                action: {
+                                  label: "view",
+                                  onClick: () => {
+                                    redirect(publishedFormUrl)
+                                  },
                                 },
-                              },
-                            })
-                          } else {
-                            console.log("something went wrong")
+                              })
+                            }
+                          } catch (e) {
+                            console.error(e)
                           }
                         }}
                       >
