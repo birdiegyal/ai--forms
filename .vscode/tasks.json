@@ -2,7 +2,8 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Start Deno Development Environment",
+      // btw we aren't using local dev setup rn but its nice for next week todos.
+      "label": "start supabase local dev env",
       "type": "shell",
       "command": "nix develop && clear",
       "presentation": {
