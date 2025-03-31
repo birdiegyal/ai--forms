@@ -8,15 +8,11 @@ export const dynamicParams = true
 export async function generateStaticParams() {
   const supabase = await createISRClient()
   const { data, error } = await supabase.from("publishForms").select("formId")
-
   // put better error handling
   if (error) throw error
-
-  if (data) {
-    return data.map(({ formId }) => ({
-      formId: String(formId),
-    }))
-  }
+  return data.map(({ formId }) => ({
+    formId: String(formId),
+  }))
 }
 
 export default async function Form({
