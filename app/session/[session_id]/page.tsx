@@ -3,42 +3,16 @@
 import { generateUUID } from "@/lib/utils"
 import { PromptInput, PromptInputTextarea } from "@/components/ui/prompt-input"
 import Chat from "@/components/chats"
-import {
-  experimental_useObject as useObject,
-  type Message
-} from "@ai-sdk/react"
+import { experimental_useObject as useObject } from "@ai-sdk/react"
 import { formField } from "@/app/api/chat/schema"
 import { z } from "zod"
 import { useSearchParams, usePathname } from "next/navigation"
 import { useEffect, useReducer } from "react"
-
-export type chatMessage =
-  | (Message & {
-      object: z.infer<typeof formField>[]
-    })
-  | Message
-
-type UserAction = {
-  role: "user"
-  content: string
-}
-
-type AssistantAction = {
-  role: "assistant"
-  object: z.infer<typeof formField>[]
-}
-
-export type ActionType = {
-  type: "add" | "delete"
-  id?: string
-} & (UserAction | AssistantAction)
-
-type RoleHandlersType = Partial<{
-  [k in chatMessage["role"]]: (
-    state: chatMessage[],
-    action: ActionType
-  ) => chatMessage[]
-}>
+import {
+  type chatMessage,
+  type ActionType,
+  type RoleHandlersType,
+} from "@/lib/types"
 
 // type TypeHandlersType = {
 //   [k in ActionType["type"]]: (
@@ -55,14 +29,17 @@ const roleHandlers: RoleHandlersType = {
     }
     switch (action.type) {
       case "add":
-        return [
+        const msgs: chatMessage[] = [
           ...state,
           {
             id: action.id || generateUUID(),
             role: "user",
-            content: action.content
-          }
+            content: action.content,
+          },
         ]
+        // we need to push this up to the /api/chat route handler as json.
+        console.log(msgs)
+        return msgs
       case "delete":
         return state.filter((msg) => msg.id !== action.id)
     }
@@ -73,19 +50,21 @@ const roleHandlers: RoleHandlersType = {
     }
     switch (action.type) {
       case "add":
-        return [
+        const msgs: chatMessage[] = [
           ...state,
           {
             id: action.id || generateUUID(),
             role: "assistant",
             object: action.object,
-            content: ""
-          }
+            content: "",
+          },
         ]
+        console.log(msgs)
+        return msgs
       case "delete":
         return state.filter((msg) => msg.id !== action.id)
     }
-  }
+  },
 }
 
 // const typeHandlers: TypeHandlersType = {
@@ -104,10 +83,11 @@ function messageDispatcher(state: chatMessage[], action: ActionType) {
 }
 
 export default function () {
+
   const {
     submit: handleSubmit,
     stop,
-    isLoading
+    isLoading,
   } = useObject({
     api: "/api/chat",
     schema: z.array(formField),
@@ -116,10 +96,10 @@ export default function () {
         dispatch({
           type: "add",
           role: "assistant",
-          object: object
+          object: object,
         })
       }
-    }
+    },
   })
 
   const searchParams = useSearchParams()
@@ -132,8 +112,8 @@ export default function () {
           {
             role: "user",
             content: prompt,
-            id: generateUUID()
-          }
+            id: generateUUID(),
+          },
         ]
       : []
   )
@@ -141,11 +121,9 @@ export default function () {
   // one request is made in here.
   useEffect(() => {
     if (prompt) {
-      console.count("# of times this effect runs")
       handleSubmit(prompt)
       window.history.replaceState({}, "", currentPath)
     }
-
     return stop
   }, [])
 
@@ -161,7 +139,7 @@ export default function () {
         onSubmit={handleSubmit}
       >
         <PromptInputTextarea
-          placeholder="Describe your Form for hiring a Design Engineer..."
+          placeholder="How can i improve your forms further..."
           className="dark:bg-input/0 overflow-y-auto p-2"
           isLoading={isLoading}
           stop={stop}
@@ -171,7 +149,3 @@ export default function () {
     </>
   )
 }
-
-/* 
-TODO
-*/

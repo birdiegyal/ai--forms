@@ -18,7 +18,8 @@ import React, {
 import { Button } from "@/components/ui/button"
 import { ArrowUp, CircleStop } from "lucide-react"
 import Link from "next/link"
-import { ActionType } from "@/app/session/[session_id]/page"
+import { ActionType } from "@/lib/types"
+import { createAnonUser } from "@/app/actions"
 
 type PromptInputContextType = {
   isLoading: boolean
@@ -170,13 +171,21 @@ function PromptInputTextarea({
       <PromptInputActions className="justify-end pt-2">
         {!navigateTo ? (
           <Button
-            variant="ghost"
-            size="icon"
-            className="bg-background cursor-pointer rounded-full border-2 [&_svg_rect]:fill-red-400 [&_svg_rect]:stroke-red-400"
-            disabled={disabled}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
+          variant="ghost"
+          size="icon"
+          className="bg-background cursor-pointer rounded-full border-2 [&_svg_rect]:fill-red-400 [&_svg_rect]:stroke-red-400"
+          disabled={disabled}
+          onClick={async (e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            // this is the perfect place to trigger a server action for creating a anon user if not exists.
+              const res = await createAnonUser()
+              if (!res) {
+                console.error("failed to create anon user")
+              } else {
+                console.log(res)
+              }
+
               if (dispatch) {
                 dispatch({
                   role: "user",
