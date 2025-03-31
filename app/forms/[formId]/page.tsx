@@ -1,12 +1,22 @@
 import FormPreview from "@/components/form-preview"
 import { getFormFields } from "@/app/actions"
-import { createISRClient } from "@/lib/supabase"
+import { createServerClient } from "@supabase/ssr"
 import { type formSchemaType } from "@/lib/types"
-
 export const dynamicParams = true
 
 export async function generateStaticParams() {
-  const supabase = await createISRClient()
+  // we need to take a loot at this later.
+  // const cookieStore = await cookies()
+  // const supabase = createClient(cookieStore)
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
+    {
+      cookies: {
+        get: (name) => null
+      }
+    }
+  )
   const { data, error } = await supabase.from("publishForms").select("formId")
   // put better error handling
   if (error) throw error
