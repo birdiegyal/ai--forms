@@ -43,6 +43,7 @@ export default function Chat({
                         onClick={async (e) => {
                           e.preventDefault()
                           const res = await publishForm(message.object)
+                          console.log(res)
                           if (res) {
                             const publishedFormUrl = `/forms/${res.formId}`
                             toast("Form published successfully", {
@@ -53,6 +54,8 @@ export default function Chat({
                                 },
                               },
                             })
+                          } else {
+                            console.log("something went wrong")
                           }
                         }}
                       >

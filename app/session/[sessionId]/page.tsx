@@ -38,7 +38,7 @@ const roleHandlers: RoleHandlersType = {
           },
         ]
         // we need to push this up to the /api/chat route handler as json.
-        console.log(msgs)
+
         return msgs
       case "delete":
         return state.filter((msg) => msg.id !== action.id)
@@ -59,7 +59,7 @@ const roleHandlers: RoleHandlersType = {
             content: "",
           },
         ]
-        console.log(msgs)
+
         return msgs
       case "delete":
         return state.filter((msg) => msg.id !== action.id)
@@ -83,7 +83,6 @@ function messageDispatcher(state: chatMessage[], action: ActionType) {
 }
 
 export default function () {
-
   const {
     submit: handleSubmit,
     stop,
@@ -118,7 +117,6 @@ export default function () {
       : []
   )
 
-  // one request is made in here.
   useEffect(() => {
     if (prompt) {
       handleSubmit(prompt)
